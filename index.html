@@ -1,0 +1,2402 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#FFE500">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>MediaVault - Galeri Pribadi</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="manifest" href="data:application/json;charset=utf-8,{&quot;name&quot;:&quot;MediaVault&quot;,&quot;short_name&quot;:&quot;MediaVault&quot;,&quot;description&quot;:&quot;Galeri media pribadi&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;#FFF8E7&quot;,&quot;theme_color&quot;:&quot;#FFE500&quot;,&quot;orientation&quot;:&quot;portrait&quot;}">
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='12' fill='%23FFE500' stroke='%23000' stroke-width='6'/%3E%3Cpath d='M35 28h30c5 0 9 4 9 9v30c0 5-4 9-9 9H35c-5 0-9-4-9-9V37c0-5 4-9 9-9z' fill='none' stroke='%23000' stroke-width='6'/%3E%3Cpath d='M38 46l8 8 16-16' fill='none' stroke='%23000' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#FFF8E7;
+  --surface:#FFFFFF;
+  --surface-2:#F5F1E8;
+  --surface-3:#E8E2D5;
+  --border:#000000;
+  --text:#000000;
+  --text-muted:#555555;
+  --yellow:#FFE500;
+  --blue:#4D96FF;
+  --pink:#FF5C8A;
+  --green:#6BCB77;
+  --purple:#B983FF;
+  --orange:#FF8C42;
+  --red:#FF3B30;
+  --cyan:#00D9FF;
+  --gray:#B0B0B0;
+  --shadow:5px 5px 0 #000;
+  --shadow-sm:3px 3px 0 #000;
+  --shadow-lg:8px 8px 0 #000;
+  --border-w:3px;
+}
+html,body{background:var(--bg);min-height:100vh;font-family:'Space Grotesk',-apple-system,system-ui,sans-serif;color:var(--text);font-weight:500;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+body{display:flex;justify-content:center;align-items:flex-start;background-image:radial-gradient(circle,#000 1px,transparent 1px);background-size:20px 20px;background-position:0 0}
+#installBanner{display:none;background:var(--yellow);padding:16px 20px;text-align:center;color:#000;font-weight:700;cursor:pointer;width:100%;border:var(--border-w) solid #000;font-size:15px;position:sticky;top:0;z-index:999;align-items:center;justify-content:center;gap:12px;font-family:'Archivo Black',sans-serif;letter-spacing:.5px;box-shadow:var(--shadow-sm);margin-bottom:8px}
+.container{width:100%;max-width:480px;background:var(--bg);min-height:100vh;padding-bottom:90px;position:relative}
+
+.header{padding:16px 16px 12px;background:var(--surface);border-bottom:var(--border-w) solid #000;position:sticky;top:0;z-index:10}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{width:46px;height:46px;border-radius:8px;background:var(--yellow);border:var(--border-w) solid #000;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);flex-shrink:0}
+.logo-icon svg{width:26px;height:26px}
+.logo-text{display:flex;flex-direction:column;min-width:0}
+.logo-name{font-family:'Archivo Black',sans-serif;font-size:17px;letter-spacing:-.5px;color:#000;line-height:1.1}
+.logo-tagline{font-family:'Space Grotesk',sans-serif;color:var(--text-muted);font-size:11px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;margin-top:2px}
+.header-actions{display:flex;gap:6px;align-items:center}
+.icon-btn{background:var(--surface);border:var(--border-w) solid #000;color:#000;width:40px;height:40px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:transform .1s,box-shadow .1s;flex-shrink:0;position:relative;padding:0;box-shadow:var(--shadow-sm);font-weight:700}
+.icon-btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 #000}
+.icon-btn:active{transform:translate(3px,3px);box-shadow:0 0 0 #000}
+.icon-btn.notif-btn{background:var(--pink);color:#000}
+.icon-btn.notif-btn.has-notif{animation:bellShake 1s infinite}
+@keyframes bellShake{0%,100%{transform:rotate(0deg)}10%,30%,50%,70%,90%{transform:rotate(-15deg)}20%,40%,60%,80%{transform:rotate(15deg)}}
+.notif-dot{position:absolute;top:-6px;right:-6px;width:16px;height:16px;background:var(--red);border:2px solid #000;border-radius:50%;display:none}
+.notif-dot.active{display:block}
+.icon-btn.chat-btn{background:var(--cyan);color:#000;display:none}
+.icon-btn.chat-btn.visible{display:flex}
+.chat-dot{position:absolute;top:-6px;right:-6px;width:16px;height:16px;background:var(--red);border:2px solid #000;border-radius:50%;display:none}
+.chat-dot.active{display:block}
+.icon-btn.dl-btn{background:var(--red);color:#fff;width:40px!important;height:40px!important;min-width:40px!important;max-width:40px!important;flex:0 0 40px!important;padding:0!important;margin:0!important}
+
+.search-input-wrapper{display:flex;align-items:center;gap:8px;background:var(--surface);border:var(--border-w) solid #000;border-radius:8px;padding:10px 14px;box-shadow:var(--shadow-sm);transition:transform .1s,box-shadow .1s}
+.search-input-wrapper:focus-within{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--blue)}
+.search-input-wrapper i{color:#000;font-size:14px}
+.search-input-wrapper input{flex:1;background:transparent;border:none;color:#000;font-size:14px;outline:none;min-width:0;font-weight:600;font-family:'Space Grotesk',sans-serif}
+.search-input-wrapper input::placeholder{color:var(--text-muted);font-weight:500}
+.clear-search{background:transparent;border:none;color:#000;cursor:pointer;display:none;font-size:16px;padding:2px}
+.clear-search.active{display:block}
+
+.main-tabs{display:flex;gap:8px;margin-top:12px}
+.main-tab{flex:1;background:var(--surface);border:var(--border-w) solid #000;color:#000;padding:10px 6px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:transform .1s,box-shadow .1s;display:flex;align-items:center;justify-content:center;gap:5px;box-shadow:var(--shadow-sm);font-family:'Space Grotesk',sans-serif;text-transform:uppercase;letter-spacing:.3px}
+.main-tab.active{background:var(--yellow)}
+.main-tab:active{transform:translate(3px,3px);box-shadow:0 0 0 #000}
+.main-tab .badge{background:#000;color:#fff;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:800;font-family:'Archivo Black',sans-serif}
+.main-tab.active .badge{background:#000}
+
+.filter-tabs{display:flex;gap:6px;margin-top:12px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.filter-tabs::-webkit-scrollbar{display:none}
+.filter-tab{background:var(--surface);border:2px solid #000;color:#000;padding:7px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:5px;transition:transform .1s,box-shadow .1s;box-shadow:3px 3px 0 #000;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;letter-spacing:.3px}
+.filter-tab.active{background:var(--purple)}
+.filter-tab:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000}
+
+.gallery{padding:16px;display:grid;grid-template-columns:repeat(2,1fr);gap:14px;min-height:300px}
+.gallery-item{position:relative;border-radius:10px;overflow:hidden;background:var(--surface);border:var(--border-w) solid #000;cursor:pointer;transition:transform .1s,box-shadow .1s;aspect-ratio:9/16;box-shadow:var(--shadow-sm)}
+.gallery-item:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #000}
+.gallery-item:active{transform:translate(3px,3px);box-shadow:0 0 0 #000}
+.gallery-item .media-preview{width:100%;height:100%;object-fit:cover;display:block;background:#000}
+.gallery-item .media-overlay{position:absolute;bottom:0;left:0;right:0;padding:30px 10px 10px;background:linear-gradient(to top,rgba(0,0,0,.95) 0%,rgba(0,0,0,.75) 50%,transparent 100%)}
+.gallery-item .media-title{font-size:12px;font-weight:800;margin-bottom:2px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Space Grotesk',sans-serif}
+.gallery-item .media-meta{display:flex;align-items:center;gap:6px;font-size:10px;color:rgba(255,255,255,.85);margin-top:2px;font-weight:600}
+.gallery-item .type-badge{position:absolute;top:8px;right:8px;background:var(--yellow);color:#000;padding:4px 8px;border-radius:4px;font-size:9px;font-weight:800;display:flex;align-items:center;gap:3px;border:2px solid #000;text-transform:uppercase;letter-spacing:.3px}
+.gallery-item .owner-badge{position:absolute;top:8px;left:8px;background:var(--blue);color:#fff;padding:4px 8px;border-radius:4px;font-size:9px;font-weight:800;display:flex;align-items:center;gap:3px;border:2px solid #000;max-width:60%;overflow:hidden;text-transform:uppercase;letter-spacing:.3px}
+.gallery-item .owner-badge.public{background:var(--orange)}
+.gallery-item .owner-badge.saved{background:var(--green)}
+.rainbow-badge{position:absolute;top:8px;left:8px;padding:4px 10px;border-radius:4px;font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#000;background:linear-gradient(90deg,#FF3B30,#FF8C42,#FFE500,#6BCB77,#00D9FF,#4D96FF,#B983FF);background-size:200% 100%;animation:rainbowMove 3s linear infinite;border:2px solid #000;display:flex;align-items:center;gap:4px;z-index:3}
+@keyframes rainbowMove{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+.gallery-item .play-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:46px;height:46px;background:var(--yellow);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#000;font-size:16px;border:3px solid #000}
+.empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text-muted);background:var(--surface);border:var(--border-w) solid #000;border-radius:12px;box-shadow:var(--shadow)}
+.empty-state i{font-size:60px;color:#000;margin-bottom:16px;display:block}
+.empty-state h3{color:#000;font-size:16px;margin-bottom:6px;font-family:'Archivo Black',sans-serif;text-transform:uppercase;letter-spacing:.5px}
+.empty-state p{font-size:13px;line-height:1.5;font-weight:500}
+
+.fab{position:fixed;bottom:24px;right:24px;width:64px;height:64px;background:var(--yellow);border:var(--border-w) solid #000;border-radius:50%;color:#000;font-size:24px;cursor:pointer;box-shadow:5px 5px 0 #000;display:flex;align-items:center;justify-content:center;transition:transform .1s,box-shadow .1s;z-index:50;font-weight:900}
+.fab:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 #000}
+.fab:active{transform:translate(5px,5px);box-shadow:0 0 0 #000}
+.fab.hidden{display:none!important}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal{background:var(--surface);border-radius:16px 16px 0 0;border:var(--border-w) solid #000;border-bottom:none;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-header{padding:18px 20px;border-bottom:var(--border-w) solid #000;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--yellow);z-index:2;border-radius:13px 13px 0 0}
+.modal-header h2{font-size:16px;font-weight:800;display:flex;align-items:center;gap:10px;font-family:'Archivo Black',sans-serif;text-transform:uppercase;letter-spacing:.3px;color:#000}
+.modal-header h2 i{color:#000}
+.close-btn{background:var(--surface);border:2px solid #000;color:#000;width:34px;height:34px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:transform .1s,box-shadow .1s;font-weight:800;box-shadow:3px 3px 0 #000}
+.close-btn:active{transform:translate(3px,3px);box-shadow:0 0 0 #000}
+.modal-body{padding:20px}
+
+.form-group{margin-bottom:18px}
+.form-label{display:flex;color:#000;font-size:12px;font-weight:800;margin-bottom:8px;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.5px;font-family:'Space Grotesk',sans-serif}
+.form-label i{color:#000;font-size:12px}
+.form-label .required{color:var(--red)}
+.form-input,.form-textarea{width:100%;background:var(--surface);border:var(--border-w) solid #000;border-radius:8px;padding:12px 14px;color:#000;font-size:14px;outline:none;font-family:'Space Grotesk',sans-serif;font-weight:600;transition:transform .1s,box-shadow .1s;box-shadow:var(--shadow-sm);resize:vertical}
+.form-input:focus,.form-textarea:focus{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--blue)}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--text-muted);font-weight:500}
+.form-textarea{min-height:80px}
+
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--surface);border:var(--border-w) solid #000;border-radius:8px;margin-bottom:18px;gap:10px;box-shadow:var(--shadow-sm)}
+.toggle-info{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.toggle-info i{color:#000;font-size:18px;flex-shrink:0}
+.toggle-text{display:flex;flex-direction:column;min-width:0}
+.toggle-title{color:#000;font-size:13px;font-weight:800}
+.toggle-desc{color:var(--text-muted);font-size:11px;margin-top:1px;font-weight:500}
+.switch{position:relative;width:52px;height:30px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;inset:0;background:var(--surface-3);border-radius:20px;transition:.2s;border:2px solid #000}
+.slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:2px;background:#000;border-radius:50%;transition:.2s}
+.switch input:checked + .slider{background:var(--green)}
+.switch input:checked + .slider:before{transform:translateX(22px);background:#000}
+
+.file-upload{border:var(--border-w) dashed #000;border-radius:12px;padding:30px 20px;text-align:center;cursor:pointer;transition:transform .1s;background:var(--surface);position:relative;box-shadow:var(--shadow-sm)}
+.file-upload:hover{background:var(--yellow)}
+.file-upload.dragover{background:var(--green)}
+.file-upload.has-file{padding:0;border-style:solid;overflow:hidden}
+.file-upload .upload-icon{font-size:32px;color:#000;margin-bottom:10px;display:block}
+.file-upload .upload-text{color:#000;font-size:14px;font-weight:800;margin-bottom:4px;font-family:'Archivo Black',sans-serif;text-transform:uppercase}
+.file-upload .upload-hint{color:var(--text-muted);font-size:11px;font-weight:600}
+.file-upload input[type="file"]{display:none}
+.file-preview{width:100%;max-height:300px;object-fit:contain;display:block;background:#000}
+.file-remove-x{position:absolute;top:10px;right:10px;width:34px;height:34px;background:var(--red);border:2px solid #000;border-radius:8px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;z-index:5;font-weight:800;box-shadow:3px 3px 0 #000}
+.file-preview-info{padding:10px 14px;background:var(--yellow);display:flex;align-items:center;gap:10px;border-top:var(--border-w) solid #000}
+.file-preview-info .file-meta{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.file-preview-info .file-meta i{color:#000;font-size:14px;flex-shrink:0}
+.file-preview-info .file-meta span{color:#000;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700}
+
+.btn{width:100%;padding:14px 20px;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;border:var(--border-w) solid #000;transition:transform .1s,box-shadow .1s;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;letter-spacing:.5px;box-shadow:var(--shadow-sm)}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 #000}
+.btn:active{transform:translate(3px,3px);box-shadow:0 0 0 #000}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:var(--shadow-sm)}
+.btn-primary{background:var(--yellow);color:#000}
+.btn-secondary{background:var(--surface);color:#000}
+.btn-danger{background:var(--red);color:#fff}
+.btn-success{background:var(--green);color:#000}
+.btn-gold{background:var(--yellow);color:#000}
+.btn-upgrade{background:var(--cyan);color:#000}
+
+.detail-media-container{position:relative;background:#000;display:flex;align-items:center;justify-content:center;max-height:60vh;overflow:hidden;border-bottom:var(--border-w) solid #000}
+.detail-media{width:100%;max-height:60vh;display:block;object-fit:contain}
+.detail-info{padding:16px 20px}
+.detail-title{font-size:18px;font-weight:800;margin-bottom:8px;font-family:'Archivo Black',sans-serif}
+.detail-desc{color:#000;font-size:14px;line-height:1.6;margin-bottom:12px;white-space:pre-wrap;word-break:break-word;font-weight:500;background:var(--surface-2);padding:10px;border-radius:8px;border:2px solid #000}
+.detail-owner{display:inline-flex;align-items:center;gap:6px;background:var(--blue);color:#fff;border:2px solid #000;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:800;margin-bottom:12px;text-transform:uppercase;letter-spacing:.3px}
+.detail-owner.rainbow{background:linear-gradient(90deg,#FF3B30,#FF8C42,#FFE500,#6BCB77,#00D9FF,#4D96FF,#B983FF);background-size:200% 100%;animation:rainbowMove 3s linear infinite;color:#000}
+.detail-meta{display:flex;flex-wrap:wrap;gap:10px;padding-top:12px;border-top:2px solid #000;font-size:12px;color:#000;font-weight:600;margin-top:4px}
+.detail-meta span{display:flex;align-items:center;gap:5px}
+.detail-meta i{color:#000}
+.detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 20px 20px}
+.detail-actions .btn{padding:12px;font-size:12px}
+
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(150px);background:var(--yellow);color:#000;padding:14px 20px;border-radius:10px;border:var(--border-w) solid #000;box-shadow:var(--shadow);font-size:13px;font-weight:800;z-index:9999;display:flex;align-items:center;gap:10px;opacity:0;transition:.3s;max-width:90%;text-transform:uppercase;letter-spacing:.3px}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast i{color:#000;font-size:16px}
+.toast.error{background:var(--red);color:#fff}
+.toast.error i{color:#fff}
+.toast.warning{background:var(--orange);color:#000}
+
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1500;display:none;align-items:center;justify-content:center;padding:20px}
+.confirm-overlay.active{display:flex}
+.confirm-box{background:var(--surface);border-radius:12px;padding:24px;max-width:340px;width:100%;text-align:center;border:var(--border-w) solid #000;box-shadow:var(--shadow-lg)}
+.confirm-box i{font-size:44px;color:var(--red);margin-bottom:14px}
+.confirm-box h3{font-size:17px;margin-bottom:8px;font-family:'Archivo Black',sans-serif;text-transform:uppercase;letter-spacing:.3px}
+.confirm-box p{color:var(--text-muted);font-size:13px;margin-bottom:20px;line-height:1.5;font-weight:600}
+.confirm-actions{display:flex;gap:10px}
+.confirm-actions .btn{padding:12px;font-size:12px}
+
+.notif-modal{background:var(--surface);border-radius:16px 16px 0 0;border:var(--border-w) solid #000;border-bottom:none;width:100%;max-width:480px;max-height:92vh;overflow:hidden;animation:slideUp .3s ease;display:flex;flex-direction:column}
+.notif-header{padding:18px 20px;background:var(--pink);display:flex;align-items:center;justify-content:space-between;border-bottom:var(--border-w) solid #000;border-radius:13px 13px 0 0;flex-shrink:0}
+.notif-header-info{display:flex;align-items:center;gap:12px}
+.notif-avatar{width:44px;height:44px;border-radius:10px;background:var(--yellow);display:flex;align-items:center;justify-content:center;border:2px solid #000;flex-shrink:0;font-size:18px;color:#000;position:relative;font-weight:800}
+.notif-title-text{display:flex;flex-direction:column}
+.notif-name{font-size:15px;font-weight:800;color:#000;font-family:'Archivo Black',sans-serif;text-transform:uppercase;letter-spacing:.3px}
+.notif-sub{font-size:11px;color:#000;font-weight:700;opacity:.8}
+.notif-header .close-btn{background:var(--yellow);border-color:#000;color:#000}
+.notif-clear-btn{background:var(--yellow);border:2px solid #000;color:#000;cursor:pointer;display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;font-size:14px;font-weight:800;transition:transform .1s,box-shadow .1s;box-shadow:3px 3px 0 #000}
+.notif-clear-btn:active{transform:translate(3px,3px);box-shadow:0 0 0 #000}
+.owner-badge-notif{position:absolute;top:-6px;right:-6px;background:var(--yellow);color:#000;font-size:8px;font-weight:900;padding:2px 6px;border-radius:6px;border:2px solid #000;letter-spacing:.3px;z-index:10}
+.notif-avatar.owner{background:var(--yellow)!important}
+.notif-avatar.owner i{color:#000!important}
+.owner-input{width:100%;background:var(--surface);border:var(--border-w) solid #000;border-radius:8px;padding:14px 16px;color:#000;font-size:15px;outline:none;text-align:center;letter-spacing:2px;font-weight:800;cursor:text;font-family:'Space Grotesk',sans-serif;box-shadow:var(--shadow-sm)}
+.owner-input:focus{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--yellow)}
+.owner-hint{text-align:center;color:var(--text-muted);font-size:12px;margin-top:12px;font-weight:600}
+.owner-hint i{color:var(--orange)}
+.notif-delete-btn{position:absolute;top:8px;right:8px;width:28px;height:28px;background:var(--red);border:2px solid #000;border-radius:6px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;z-index:5;font-weight:800}
+.notif-list{flex:1;overflow-y:auto;padding:12px;background:var(--bg);display:flex;flex-direction:column;gap:10px;min-height:300px}
+.notif-item{display:flex;gap:12px;padding:14px;background:var(--surface);border:var(--border-w) solid #000;border-radius:10px;position:relative;overflow:hidden;cursor:pointer;transition:transform .1s,box-shadow .1s;box-shadow:var(--shadow-sm)}
+.notif-item:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 #000}
+.notif-item.owner-notif{background:var(--yellow)}
+.notif-item.maintenance{background:var(--red);color:#fff}
+.notif-item.maintenance .notif-content-title, .notif-item.maintenance .notif-content-msg, .notif-item.maintenance .notif-content-time{color:#fff}
+.notif-item.morning{background:var(--yellow)}
+.notif-item.noon{background:var(--orange)}
+.notif-item.afternoon{background:var(--pink)}
+.notif-item.evening{background:var(--purple);color:#fff}
+.notif-item.evening .notif-content-title, .notif-item.evening .notif-content-msg{color:#fff}
+.notif-item.sunday{background:var(--green)}
+.notif-item.info{background:var(--cyan)}
+.notif-icon{width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;color:#000;background:var(--surface);border:2px solid #000;font-weight:800}
+.notif-content{flex:1;min-width:0}
+.notif-content-title{color:#000;font-size:13.5px;font-weight:800;margin-bottom:3px;font-family:'Space Grotesk',sans-serif}
+.notif-content-msg{color:#000;font-size:12.5px;line-height:1.5;word-break:break-word;font-weight:500}
+.notif-content-time{color:#000;font-size:10.5px;margin-top:6px;display:flex;align-items:center;gap:4px;font-weight:700;opacity:.7}
+.notif-empty{text-align:center;padding:60px 20px;color:var(--text-muted)}
+.notif-empty i{font-size:50px;color:#000;margin-bottom:12px;display:block}
+.notif-empty h3{font-family:'Archivo Black',sans-serif;text-transform:uppercase}
+.emoji-picker{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:4px}
+.emoji-btn{aspect-ratio:1;background:var(--surface);border:2px solid #000;border-radius:8px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .1s,box-shadow .1s;box-shadow:2px 2px 0 #000}
+.emoji-btn:active{transform:translate(2px,2px);box-shadow:0 0 0 #000}
+.emoji-btn.active{background:var(--yellow);box-shadow:3px 3px 0 #000}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
+
+.maintenance-overlay{position:fixed;inset:0;background:var(--red);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;text-align:center;background-image:repeating-linear-gradient(45deg,rgba(0,0,0,.1) 0,rgba(0,0,0,.1) 10px,transparent 10px,transparent 20px)}
+.maintenance-overlay.active{display:flex}
+.maintenance-content{max-width:400px;width:100%;background:var(--surface);border:var(--border-w) solid #000;border-radius:16px;padding:32px 24px;box-shadow:var(--shadow-lg)}
+.maintenance-icon{width:100px;height:100px;margin:0 auto 24px;background:var(--yellow);border:var(--border-w) solid #000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:44px;color:#000;animation:rotate 3s linear infinite;box-shadow:var(--shadow-sm)}
+@keyframes rotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.maintenance-title{font-size:22px;font-weight:800;margin-bottom:8px;color:#000;font-family:'Archivo Black',sans-serif;text-transform:uppercase;letter-spacing:-.5px}
+.maintenance-subtitle{font-size:13px;color:var(--text-muted);margin-bottom:24px;line-height:1.6;font-weight:600}
+.maintenance-countdown{background:var(--yellow);border:var(--border-w) solid #000;border-radius:12px;padding:18px;margin-bottom:20px;box-shadow:var(--shadow-sm)}
+.maintenance-countdown-label{font-size:11px;color:#000;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-family:'Archivo Black',sans-serif}
+.maintenance-countdown-timer{display:flex;justify-content:center;gap:8px}
+.countdown-box{background:var(--surface);border:2px solid #000;border-radius:8px;padding:12px 14px;min-width:64px;box-shadow:2px 2px 0 #000}
+.countdown-num{font-size:26px;font-weight:800;color:#000;line-height:1;font-family:'Archivo Black',sans-serif}
+.countdown-label{font-size:9px;color:#000;text-transform:uppercase;margin-top:6px;font-weight:800;letter-spacing:.5px}
+.maintenance-until{font-size:12px;color:#000;margin-top:8px;font-weight:700}
+.maintenance-reason{background:var(--surface-2);border:2px solid #000;border-radius:12px;padding:14px;font-size:12px;color:#000;line-height:1.6;text-align:left;font-weight:600}
+.maintenance-reason strong{color:#000;display:block;margin-bottom:6px;font-family:'Archivo Black',sans-serif;text-transform:uppercase;font-size:11px}
+.maintenance-setup{padding:20px}
+.maintenance-setup .form-group{margin-bottom:16px}
+.time-picker-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.time-picker-row select{background:var(--surface);border:2px solid #000;border-radius:8px;padding:10px;color:#000;font-size:13px;outline:none;cursor:pointer;text-align:center;font-weight:800;font-family:'Space Grotesk',sans-serif;box-shadow:2px 2px 0 #000;appearance:none}
+.maintenance-preview{background:var(--surface-2);border:2px solid #000;border-radius:10px;padding:14px;margin:16px 0;font-size:12px;color:#000;text-align:center;line-height:1.6;font-weight:600;box-shadow:var(--shadow-sm)}
+.maintenance-preview strong{color:#000;display:block;font-size:13px;margin-bottom:4px;font-family:'Archivo Black',sans-serif;text-transform:uppercase;font-size:11px}
+.maintenance-active-info{background:var(--red);color:#fff;border:2px solid #000;border-radius:12px;padding:14px;margin-bottom:16px;text-align:center;box-shadow:var(--shadow-sm)}
+.maintenance-active-info .ma-title{color:#fff;font-weight:800;font-size:12px;margin-bottom:6px;font-family:'Archivo Black',sans-serif;text-transform:uppercase}
+.maintenance-active-info .ma-time{color:#fff;font-size:20px;font-weight:800;font-family:'Archivo Black',sans-serif}
+.maintenance-active-info .ma-until{color:#fff;font-size:11px;margin-top:4px;font-weight:600;opacity:.9}
+.maint-owner-unlock{position:fixed;bottom:24px;right:24px;background:var(--yellow);color:#000;border:var(--border-w) solid #000;padding:14px 22px;border-radius:8px;font-weight:800;font-size:13px;cursor:pointer;z-index:10001;box-shadow:var(--shadow);display:none;align-items:center;gap:8px;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;letter-spacing:.3px}
+.maint-owner-unlock.active{display:flex}
+.maint-owner-unlock:active{transform:translate(3px,3px);box-shadow:0 0 0 #000}
+
+.chat-modal{background:var(--surface);border-radius:16px 16px 0 0;border:var(--border-w) solid #000;border-bottom:none;width:100%;max-width:480px;height:92vh;overflow:hidden;animation:slideUp .3s ease;display:flex;flex-direction:column}
+.chat-header{padding:14px 16px;background:var(--cyan);display:flex;align-items:center;justify-content:space-between;border-bottom:var(--border-w) solid #000;border-radius:13px 13px 0 0;flex-shrink:0}
+.chat-header-info{display:flex;align-items:center;gap:10px}
+.chat-avatar{width:42px;height:42px;border-radius:8px;background:var(--yellow);display:flex;align-items:center;justify-content:center;border:2px solid #000;flex-shrink:0;font-size:18px;color:#000}
+.chat-title-text{display:flex;flex-direction:column}
+.chat-name{font-size:15px;font-weight:800;color:#000;display:flex;align-items:center;gap:6px;font-family:'Archivo Black',sans-serif;text-transform:uppercase;letter-spacing:.3px}
+.chat-owner-badge{background:var(--yellow);color:#000;font-size:9px;font-weight:900;padding:2px 6px;border-radius:4px;border:2px solid #000;letter-spacing:.3px}
+.chat-status{font-size:11px;color:#000;display:flex;align-items:center;gap:4px;font-weight:700}
+.chat-status .dot{width:8px;height:8px;background:var(--green);border:2px solid #000;border-radius:50%;display:inline-block}
+.chat-status.closed .dot{background:var(--red)}
+.chat-header .close-btn{background:var(--yellow);border-color:#000;color:#000}
+.chat-owner-btn{background:var(--yellow);border:2px solid #000;color:#000;width:36px;height:36px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:3px 3px 0 #000;font-weight:800}
+.chat-owner-btn:active{transform:translate(3px,3px);box-shadow:0 0 0 #000}
+.chat-closed-banner{background:var(--red);border-bottom:var(--border-w) solid #000;padding:14px 16px;text-align:center;color:#fff;font-size:13px;font-weight:800;display:none}
+.chat-closed-banner.active{display:block}
+.chat-closed-banner .big{font-size:15px;display:block;margin-bottom:4px;font-family:'Archivo Black',sans-serif;text-transform:uppercase}
+.chat-closed-banner .small{font-size:11px;color:#fff;font-weight:600;opacity:.9}
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--bg)}
+.chat-msg{display:flex;gap:8px;max-width:85%;position:relative}
+.chat-msg.user{align-self:flex-end;flex-direction:row-reverse}
+.chat-msg.other{align-self:flex-start}
+.chat-msg.owner-msg .chat-bubble{background:var(--yellow);color:#000}
+.chat-msg .msg-avatar{width:34px;height:34px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:#000;border:2px solid #000;font-weight:800}
+.chat-msg.user .msg-avatar{background:var(--blue);color:#fff}
+.chat-msg.other .msg-avatar{background:var(--surface-3)}
+.chat-msg.owner-msg .msg-avatar{background:var(--yellow)}
+.chat-msg .chat-bubble{padding:10px 14px;border-radius:10px;font-size:13.5px;line-height:1.5;word-break:break-word;position:relative;border:2px solid #000;font-weight:500;box-shadow:2px 2px 0 #000}
+.chat-msg.user .chat-bubble{background:var(--blue);color:#fff;border-top-right-radius:2px}
+.chat-msg.other .chat-bubble{background:var(--surface);color:#000;border-top-left-radius:2px}
+.chat-msg .msg-meta{font-size:10px;color:var(--text-muted);margin-top:4px;display:flex;align-items:center;gap:4px;font-weight:700}
+.chat-msg.user .msg-meta{justify-content:flex-end}
+.msg-sender{font-weight:800;font-size:11px;margin-bottom:2px;display:block}
+.msg-delete-btn{position:absolute;top:-8px;right:-8px;width:24px;height:24px;background:var(--red);border:2px solid #000;border-radius:6px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;z-index:5;opacity:0;font-weight:800}
+.chat-msg:hover .msg-delete-btn{opacity:1}
+.chat-empty{text-align:center;padding:60px 20px;color:var(--text-muted)}
+.chat-empty i{font-size:50px;color:#000;margin-bottom:12px;display:block}
+.chat-empty h3{font-family:'Archivo Black',sans-serif;text-transform:uppercase}
+.chat-input-area{padding:10px 12px 14px;background:var(--surface);border-top:var(--border-w) solid #000;flex-shrink:0}
+.chat-input-row{display:flex;gap:8px;align-items:flex-end;background:var(--surface);border:var(--border-w) solid #000;border-radius:20px;padding:6px 6px 6px 14px;box-shadow:var(--shadow-sm)}
+.chat-input-row textarea{flex:1;background:transparent;border:none;color:#000;font-size:14px;outline:none;resize:none;font-family:'Space Grotesk',sans-serif;max-height:100px;min-height:24px;padding:6px 0;line-height:1.4;font-weight:600}
+.chat-send-btn{width:42px;height:42px;border-radius:8px;border:2px solid #000;background:var(--yellow);color:#000;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;box-shadow:2px 2px 0 #000;font-weight:800}
+.chat-send-btn:active{transform:translate(2px,2px);box-shadow:0 0 0 #000}
+.chat-schedule-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.chat-schedule-row label{font-size:11px;color:#000;margin-bottom:4px;display:block;font-weight:800;text-transform:uppercase;letter-spacing:.3px}
+.chat-schedule-row input[type="time"]{width:100%;background:var(--surface);border:2px solid #000;border-radius:8px;padding:10px;color:#000;font-size:14px;outline:none;text-align:center;font-weight:800;font-family:'Space Grotesk',sans-serif;box-shadow:2px 2px 0 #000}
+.msg-list{max-height:300px;overflow-y:auto;padding:8px;background:var(--bg)}
+.msg-list-item{background:var(--surface);border:2px solid #000;border-radius:8px;padding:10px 12px;margin-bottom:8px;position:relative;box-shadow:2px 2px 0 #000}
+.msg-list-item .msg-list-name{color:#000;font-size:11px;font-weight:800;margin-bottom:4px;text-transform:uppercase}
+.msg-list-item .msg-list-text{color:#000;font-size:12.5px;line-height:1.4;word-break:break-word;font-weight:500}
+.msg-list-item .msg-list-time{color:var(--text-muted);font-size:10px;margin-top:4px;font-weight:700}
+.msg-list-item .msg-list-delete{position:absolute;top:8px;right:8px;width:28px;height:28px;background:var(--red);border:2px solid #000;border-radius:6px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+.chat-status-indicator{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;background:var(--yellow);border-top:2px solid #000;font-size:11px;color:#000;font-weight:800;text-transform:uppercase;letter-spacing:.3px}
+.chat-status-indicator.open{background:var(--green)}
+.chat-status-indicator.closed{background:var(--red);color:#fff}
+
+.dl-modal{background:var(--surface);border-radius:16px 16px 0 0;border:var(--border-w) solid #000;border-bottom:none;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;animation:slideUp .3s ease}
+.dl-header{padding:18px 20px;background:var(--yellow);display:flex;align-items:center;justify-content:space-between;border-bottom:var(--border-w) solid #000;border-radius:13px 13px 0 0;position:sticky;top:0;z-index:3}
+.dl-header h2{font-size:16px;font-weight:800;color:#000;display:flex;align-items:center;gap:10px;font-family:'Archivo Black',sans-serif;text-transform:uppercase;letter-spacing:.3px}
+.dl-header .close-btn{background:var(--surface);border-color:#000;color:#000}
+.dl-body{padding:20px}
+
+.dl-platform-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px;background:var(--surface-2);padding:6px;border-radius:12px;border:var(--border-w) solid #000;width:100%;box-shadow:var(--shadow-sm)}
+.dl-platform-tab{background:var(--surface);border:2px solid #000;color:#000;padding:10px 4px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;transition:transform .1s,box-shadow .1s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;min-width:0;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;letter-spacing:.3px;box-shadow:2px 2px 0 #000;position:relative}
+.dl-platform-tab svg{width:22px;height:22px;display:block;flex-shrink:0}
+.dl-platform-tab span{display:block;line-height:1;white-space:nowrap}
+.dl-platform-tab.active{color:#000}
+.dl-platform-tab.active.tiktok{background:var(--red);color:#fff}
+.dl-platform-tab.active.instagram{background:var(--gray);color:#fff;opacity:.7}
+.dl-platform-tab.active.capcut{background:var(--gray);color:#fff;opacity:.7}
+.dl-platform-tab:active{transform:translate(2px,2px);box-shadow:0 0 0 #000}
+.dl-platform-tab.coming-soon{position:relative;opacity:.65}
+.dl-platform-tab.coming-soon::after{content:'SOON';position:absolute;top:-8px;right:-8px;background:var(--yellow);color:#000;font-size:7px;font-weight:900;padding:2px 5px;border-radius:4px;border:2px solid #000;letter-spacing:.5px;z-index:5}
+
+.dl-panel{display:none}
+.dl-panel.active{display:block}
+
+.coming-soon-panel{text-align:center;padding:40px 20px;background:var(--surface-2);border:var(--border-w) dashed #000;border-radius:12px;box-shadow:var(--shadow-sm)}
+.coming-soon-panel .cs-icon{width:90px;height:90px;margin:0 auto 20px;background:var(--yellow);border:var(--border-w) solid #000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;color:#000;box-shadow:var(--shadow-sm)}
+.coming-soon-panel .cs-title{font-size:22px;font-weight:800;font-family:'Archivo Black',sans-serif;text-transform:uppercase;letter-spacing:-.5px;margin-bottom:10px;color:#000}
+.coming-soon-panel .cs-desc{font-size:13px;color:var(--text-muted);font-weight:600;line-height:1.6;max-width:280px;margin:0 auto 20px}
+.coming-soon-panel .cs-badge{display:inline-flex;align-items:center;gap:8px;background:var(--yellow);color:#000;padding:10px 18px;border-radius:8px;border:var(--border-w) solid #000;font-weight:900;font-size:12px;text-transform:uppercase;letter-spacing:1px;font-family:'Archivo Black',sans-serif;box-shadow:var(--shadow-sm)}
+.coming-soon-panel .cs-badge i{font-size:14px;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.7}}
+.coming-soon-panel .cs-note{font-size:11px;color:#000;margin-top:16px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;opacity:.6}
+
+.dl-input{width:100%;background:var(--surface);border:var(--border-w) solid #000;border-radius:8px;padding:14px;color:#000;font-size:14px;outline:none;font-family:'Space Grotesk',sans-serif;font-weight:600;transition:transform .1s,box-shadow .1s;box-shadow:var(--shadow-sm)}
+.dl-input:focus{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--blue)}
+.dl-input::placeholder{color:var(--text-muted);font-weight:500}
+
+.dl-btn{width:100%;padding:14px;border-radius:8px;color:#000;border:var(--border-w) solid #000;font-weight:800;font-size:13px;cursor:pointer;transition:transform .1s,box-shadow .1s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;letter-spacing:.5px;box-shadow:var(--shadow-sm)}
+.dl-btn.tiktok{background:var(--red);color:#fff}
+.dl-btn.instagram{background:var(--pink);color:#000}
+.dl-btn.capcut{background:var(--cyan);color:#000}
+.dl-btn:active{transform:translate(3px,3px);box-shadow:0 0 0 #000}
+.dl-btn:disabled{opacity:.6;cursor:not-allowed}
+
+.dl-loading{display:none;text-align:center;padding:30px}
+.dl-loading.active{display:block}
+.dl-loading i{font-size:36px;color:#000;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.dl-result{display:none;margin-top:16px}
+.dl-result.active{display:block}
+.dl-video-preview{width:100%;max-height:400px;border-radius:10px;background:#000;margin-bottom:12px;display:block;object-fit:contain;border:var(--border-w) solid #000;box-shadow:var(--shadow-sm)}
+.dl-info{background:var(--surface-2);border:2px solid #000;border-radius:10px;padding:12px;margin-bottom:12px;box-shadow:var(--shadow-sm)}
+.dl-info .dl-title{color:#000;font-size:13px;font-weight:800;margin-bottom:6px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-family:'Space Grotesk',sans-serif}
+.dl-info .dl-author{color:#000;font-size:12px;display:flex;align-items:center;gap:6px;font-weight:700}
+.dl-dl-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dl-dl-btn{padding:12px;border-radius:8px;border:2px solid #000;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:transform .1s,box-shadow .1s;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;letter-spacing:.3px;box-shadow:2px 2px 0 #000}
+.dl-dl-btn:active{transform:translate(2px,2px);box-shadow:0 0 0 #000}
+.dl-dl-btn.tiktok-primary{background:var(--red);color:#fff;grid-column:1/-1}
+.dl-dl-btn.instagram-primary{background:var(--pink);color:#000;grid-column:1/-1}
+.dl-dl-btn.capcut-primary{background:var(--cyan);color:#000;grid-column:1/-1}
+.dl-dl-btn.secondary{background:var(--surface);color:#000}
+.dl-error{background:var(--red);border:2px solid #000;border-radius:8px;padding:12px;color:#fff;font-size:12.5px;margin-top:12px;display:none;text-align:center;font-weight:700;box-shadow:var(--shadow-sm)}
+.dl-error.active{display:block}
+.dl-examples{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.dl-example-chip{background:var(--surface);border:2px solid #000;color:#000;padding:6px 12px;border-radius:20px;font-size:10.5px;font-weight:800;cursor:pointer;transition:transform .1s,box-shadow .1s;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;letter-spacing:.3px;box-shadow:2px 2px 0 #000}
+.dl-example-chip:active{transform:translate(2px,2px);box-shadow:0 0 0 #000;background:var(--yellow)}
+.dl-note{font-size:10.5px;color:#000;margin-top:10px;text-align:center;line-height:1.4;font-weight:700;text-transform:uppercase;letter-spacing:.3px;opacity:.7}
+
+.upgrade-modal{background:var(--surface);border-radius:16px 16px 0 0;border:var(--border-w) solid #000;border-bottom:none;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;animation:slideUp .3s ease}
+.upgrade-header{padding:18px 20px;background:var(--green);display:flex;align-items:center;justify-content:space-between;border-bottom:var(--border-w) solid #000;border-radius:13px 13px 0 0;position:sticky;top:0;z-index:3}
+.upgrade-header h2{font-size:16px;font-weight:800;color:#000;display:flex;align-items:center;gap:10px;font-family:'Archivo Black',sans-serif;text-transform:uppercase;letter-spacing:.3px}
+.upgrade-header .close-btn{background:var(--surface);border-color:#000;color:#000}
+.upgrade-body{padding:20px}
+.upgrade-info{background:var(--yellow);border:var(--border-w) solid #000;border-radius:10px;padding:14px;margin-bottom:16px;font-size:12px;color:#000;line-height:1.6;font-weight:600;box-shadow:var(--shadow-sm)}
+.upgrade-info strong{color:#000;display:block;margin-bottom:6px;font-family:'Archivo Black',sans-serif;text-transform:uppercase;font-size:11px;letter-spacing:.3px}
+.upgrade-textarea{width:100%;min-height:200px;background:var(--surface);border:var(--border-w) solid #000;border-radius:8px;padding:14px;color:#000;font-size:12px;outline:none;font-family:'Courier New',monospace;resize:vertical;font-weight:500;box-shadow:var(--shadow-sm)}
+.upgrade-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.upgrade-actions .btn{padding:13px}
+.upgrade-note{font-size:11px;color:#000;margin-top:12px;line-height:1.5;text-align:center;font-weight:600;opacity:.8}
+
+.icon-btn.dl-btn{width:40px!important;height:40px!important;min-width:40px!important;max-width:40px!important;flex:0 0 40px!important;padding:0!important;margin:0!important}
+.dl-platform-tab svg path, .dl-platform-tab svg rect, .dl-platform-tab svg circle, .dl-platform-tab svg polygon{fill:currentColor}
+
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:var(--surface-2)}
+::-webkit-scrollbar-thumb{background:#000;border-radius:4px}
+
+@media (max-width:480px) {
+  .logo-name{font-size:16px}
+  .gallery{padding:12px;gap:10px}
+  .gallery-item .media-title{font-size:11px}
+  .notif-name{font-size:14px}
+  .main-tab{font-size:11px;padding:8px 4px}
+  .filter-tab{font-size:10px;padding:6px 10px}
+  .icon-btn{width:38px;height:38px;font-size:14px}
+}
+</style>
+</head>
+<body>
+
+<div class="maintenance-overlay" id="maintenanceOverlay">
+    <div class="maintenance-content">
+        <div class="maintenance-icon"><i class="fas fa-tools"></i></div>
+        <h1 class="maintenance-title">Server Maintenance</h1>
+        <p class="maintenance-subtitle">Kami sedang melakukan perawatan server. Mohon tunggu sebentar ya.</p>
+        <div class="maintenance-countdown">
+            <div class="maintenance-countdown-label">⏱️ Maintenance Berakhir Dalam</div>
+            <div class="maintenance-countdown-timer" id="maintenanceTimer">
+                <div class="countdown-box"><div class="countdown-num" id="maintHours">00</div><div class="countdown-label">Jam</div></div>
+                <div class="countdown-box"><div class="countdown-num" id="maintMinutes">00</div><div class="countdown-label">Menit</div></div>
+                <div class="countdown-box"><div class="countdown-num" id="maintSeconds">00</div><div class="countdown-label">Detik</div></div>
+            </div>
+            <div class="maintenance-until" id="maintenanceUntilText">Selesai pada: --</div>
+        </div>
+        <div class="maintenance-reason" id="maintenanceReasonBox">
+            <strong>📢 Informasi:</strong>
+            <span id="maintenanceReasonText">Server sedang dalam perawatan rutin.</span>
+        </div>
+    </div>
+</div>
+<button class="maint-owner-unlock" id="maintOwnerUnlock"><i class="fas fa-unlock"></i> Owner Access</button>
+
+<div class="container">
+    <div id="installBanner"><i class="fas fa-download"></i> Install MediaVault</div>
+
+    <div class="header">
+        <div class="header-top">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="15" y="15" width="70" height="70" rx="10" fill="none" stroke="#000" stroke-width="8" stroke-linejoin="round"/>
+                        <path d="M35 35 L65 50 L35 65 Z" fill="#000"/>
+                        <circle cx="75" cy="30" r="5" fill="#000"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-name">MediaVault</span>
+                    <span class="logo-tagline">Galeri Pribadi</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn dl-btn" id="dlBtn" title="Downloader"><i class="fas fa-download"></i></button>
+                <button class="icon-btn chat-btn" id="chatBtn" title="Chat"><i class="fas fa-comments"></i><span class="chat-dot" id="chatDot"></span></button>
+                <button class="icon-btn notif-btn" id="notifBtn" title="Notifikasi"><i class="fas fa-bell"></i><span class="notif-dot" id="notifDot"></span></button>
+                <button class="icon-btn" id="infoBtn"><i class="fas fa-circle-info"></i></button>
+            </div>
+        </div>
+
+        <div class="search-input-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Cari nama atau deskripsi...">
+            <button class="clear-search" id="clearSearch"><i class="fas fa-times-circle"></i></button>
+        </div>
+
+        <div class="main-tabs">
+            <button class="main-tab active" data-section="my"><i class="fas fa-user"></i> Saya <span class="badge" id="myCount">0</span></button>
+            <button class="main-tab" data-section="community"><i class="fas fa-globe"></i> Komunitas <span class="badge" id="communityCount">0</span></button>
+        </div>
+
+        <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all"><i class="fas fa-layer-group"></i> Semua</button>
+            <button class="filter-tab" data-filter="video"><i class="fas fa-video"></i> Video</button>
+            <button class="filter-tab" data-filter="image"><i class="fas fa-image"></i> Foto</button>
+            <button class="filter-tab" data-filter="owner"><i class="fas fa-crown"></i> By Owner</button>
+        </div>
+    </div>
+
+    <div class="gallery" id="gallery"></div>
+    <button class="fab" id="addBtn"><i class="fas fa-plus"></i></button>
+</div>
+
+<!-- MODAL ADD MEDIA -->
+<div class="modal-overlay" id="addModal">
+    <div class="modal">
+        <div class="modal-header"><h2><i class="fas fa-plus-circle"></i> Tambah Media</h2><button class="close-btn" id="closeAddModal"><i class="fas fa-times"></i></button></div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-file-upload"></i> Pilih File <span class="required">*</span></label>
+                <div class="file-upload" id="fileUpload">
+                    <input type="file" id="fileInput" accept="video/*,image/*">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <div class="upload-text">Ketuk untuk pilih file</div>
+                    <div class="upload-hint">Video atau Foto (max 100MB)</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-tag"></i> Nama <span class="required">*</span></label>
+                <input type="text" class="form-input" id="nameInput" placeholder="Nama media..." maxlength="50">
+            </div>
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-align-left"></i> Deskripsi (opsional)</label>
+                <textarea class="form-textarea" id="descInput" placeholder="Tambahkan deskripsi..." maxlength="300"></textarea>
+            </div>
+            <div class="toggle-row">
+                <div class="toggle-info"><i class="fas fa-globe"></i><div class="toggle-text"><span class="toggle-title">Bagikan ke Komunitas</span><span class="toggle-desc">Orang lain bisa lihat & simpan</span></div></div>
+                <label class="switch"><input type="checkbox" id="publicToggle"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-row" id="ownerBadgeToggleRow" style="display:none">
+                <div class="toggle-info"><i class="fas fa-crown"></i><div class="toggle-text"><span class="toggle-title">Tandai "By Owner"</span><span class="toggle-desc">Label pelangi khusus owner</span></div></div>
+                <label class="switch"><input type="checkbox" id="ownerBadgeToggle"><span class="slider"></span></label>
+            </div>
+            <button class="btn btn-primary" id="submitAddBtn"><i class="fas fa-plus"></i> Tambahkan</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DETAIL -->
+<div class="modal-overlay" id="detailModal">
+    <div class="modal">
+        <div class="modal-header"><h2><i class="fas fa-info-circle"></i> Detail</h2><button class="close-btn" id="closeDetailModal"><i class="fas fa-times"></i></button></div>
+        <div id="detailContent"></div>
+    </div>
+</div>
+
+<!-- MODAL INFO -->
+<div class="modal-overlay" id="infoModal">
+    <div class="modal">
+        <div class="modal-header"><h2><i class="fas fa-circle-info"></i> Tentang</h2><button class="close-btn" id="closeInfoModal"><i class="fas fa-times"></i></button></div>
+        <div class="modal-body">
+            <div style="text-align:center;margin-bottom:20px">
+                <div class="logo-icon" style="margin:0 auto 12px;width:72px;height:72px">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px"><rect x="15" y="15" width="70" height="70" rx="10" fill="none" stroke="#000" stroke-width="8"/><path d="M35 35 L65 50 L35 65 Z" fill="#000"/></svg>
+                </div>
+                <h3 style="font-family:'Archivo Black',sans-serif;font-size:22px;text-transform:uppercase;letter-spacing:-.5px;margin-bottom:4px">MediaVault</h3>
+                <p style="color:var(--text-muted);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px">Versi 8.1 — Neo Brutalism</p>
+            </div>
+            <div style="background:var(--surface-2);border:2px solid #000;border-radius:10px;padding:14px;box-shadow:3px 3px 0 #000">
+                <div style="font-weight:800;margin-bottom:10px;font-size:13px;font-family:'Archivo Black',sans-serif;text-transform:uppercase">✨ Fitur</div>
+                <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:600">
+                    <span>✓ Galeri video & foto</span>
+                    <span>✓ Notifikasi otomatis</span>
+                    <span>✓ Mode Owner</span>
+                    <span>✓ Maintenance Mode</span>
+                    <span>✓ Chat dengan Owner</span>
+                    <span>✓ Label "By Owner" pelangi</span>
+                    <span>✓ TikTok Downloader</span>
+                    <span style="opacity:.5">⏳ Instagram Downloader (Coming Soon)</span>
+                    <span style="opacity:.5">⏳ CapCut Downloader (Coming Soon)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL NOTIFIKASI -->
+<div class="modal-overlay" id="notifModal">
+    <div class="notif-modal">
+        <div class="notif-header">
+            <div class="notif-header-info">
+                <div class="notif-avatar" id="notifAvatar"><i class="fas fa-bell"></i></div>
+                <div class="notif-title-text">
+                    <span class="notif-name">Notifikasi</span>
+                    <span class="notif-sub" id="notifSubText">0 notifikasi</span>
+                </div>
+            </div>
+            <div style="display:flex;gap:8px">
+                <button class="notif-clear-btn" id="ownerLoginBtn" title="Login Owner" style="background:var(--yellow);"><i class="fas fa-lock"></i></button>
+                <button class="notif-clear-btn" id="addNotifBtn" title="Tambah" style="display:none;background:var(--green);"><i class="fas fa-plus"></i></button>
+                <button class="close-btn" id="closeNotifModal"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div class="notif-list" id="notifList"></div>
+    </div>
+</div>
+
+<!-- MODAL OWNER MENU -->
+<div class="modal-overlay" id="ownerMenuModal">
+    <div class="modal" style="max-height:85vh">
+        <div class="modal-header" style="background:var(--yellow)">
+            <h2><i class="fas fa-crown"></i> Menu Owner</h2>
+            <button class="close-btn" id="closeOwnerMenuModal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body" style="padding:16px">
+            <div style="text-align:center;margin-bottom:16px;padding:16px;background:var(--yellow);border:var(--border-w) solid #000;border-radius:12px;box-shadow:var(--shadow-sm)">
+                <div style="font-size:36px;margin-bottom:6px">👑</div>
+                <div style="font-weight:800;font-size:14px;font-family:'Archivo Black',sans-serif;text-transform:uppercase">OWNER MODE</div>
+                <div style="font-size:11px;margin-top:2px;font-weight:700">Kamu memiliki akses penuh</div>
+            </div>
+            <button class="btn btn-gold" onclick="openCreateNotifModal();closeOwnerMenu();" style="margin-bottom:8px;"><i class="fas fa-bell"></i> Buat Notifikasi</button>
+            <button class="btn btn-gold" onclick="openMaintenanceModal();closeOwnerMenu();" style="margin-bottom:8px;background:var(--red);color:#fff;"><i class="fas fa-tools"></i> Set Maintenance</button>
+            <button class="btn btn-gold" onclick="openChatSettings();closeOwnerMenu();" style="margin-bottom:8px;background:var(--cyan);"><i class="fas fa-comments"></i> Pengaturan Chat</button>
+            <button class="btn btn-gold" onclick="openOwnerMediaUpload();closeOwnerMenu();" style="margin-bottom:8px;background:var(--purple);"><i class="fas fa-crown"></i> Upload "By Owner"</button>
+            <button class="btn btn-upgrade" onclick="openUpgradeModal();closeOwnerMenu();" style="margin-bottom:8px;"><i class="fas fa-arrow-up"></i> Upgrade Index</button>
+            <button class="btn btn-danger" onclick="ownerLogoutClick();" style="margin-top:8px;"><i class="fas fa-sign-out-alt"></i> Keluar Owner</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL OWNER CODE -->
+<div class="modal-overlay" id="ownerCodeModal">
+    <div class="modal" style="max-height:70vh">
+        <div class="modal-header" style="background:var(--yellow)">
+            <h2><i class="fas fa-lock"></i> Mode Owner</h2>
+            <button class="close-btn" id="closeOwnerModal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div style="padding:20px">
+                <div style="text-align:center;margin-bottom:20px">
+                    <div style="width:72px;height:72px;margin:0 auto 12px;background:var(--yellow);border:var(--border-w) solid #000;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm)">
+                        <i class="fas fa-crown" style="font-size:30px;color:#000"></i>
+                    </div>
+                    <h3 style="font-size:17px;margin-bottom:6px;font-family:'Archivo Black',sans-serif;text-transform:uppercase">Verifikasi Owner</h3>
+                    <p style="color:var(--text-muted);font-size:12px;font-weight:600">Masukkan kode rahasia untuk mengakses fitur owner</p>
+                </div>
+                <input type="text" class="owner-input" id="ownerCodeInput" placeholder="Kode rahasia..." maxlength="30" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                <div class="owner-hint"><i class="fas fa-info-circle"></i> Hanya owner yang memiliki kode ini</div>
+                <button class="btn btn-gold" id="verifyOwnerBtn" style="margin-top:20px;"><i class="fas fa-unlock"></i> Verifikasi</button>
+                <button class="btn btn-secondary" id="logoutOwnerBtn" style="margin-top:8px;display:none;"><i class="fas fa-sign-out-alt"></i> Keluar Mode Owner</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CREATE NOTIF -->
+<div class="modal-overlay" id="createNotifModal">
+    <div class="modal" style="max-height:85vh">
+        <div class="modal-header" style="background:var(--pink)">
+            <h2><i class="fas fa-plus-circle"></i> Buat Notifikasi</h2>
+            <button class="close-btn" id="closeCreateNotifModal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-heading"></i> Judul <span class="required">*</span></label>
+                <input type="text" class="form-input" id="notifTitleInput" placeholder="Contoh: Info Penting" maxlength="60">
+            </div>
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-align-left"></i> Pesan <span class="required">*</span></label>
+                <textarea class="form-textarea" id="notifMessageInput" placeholder="Tulis pesan..." maxlength="300"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-smile"></i> Icon Emoji</label>
+                <div class="emoji-picker" id="emojiPicker">
+                    <button class="emoji-btn active" data-emoji="🔔">🔔</button>
+                    <button class="emoji-btn" data-emoji="📢">📢</button>
+                    <button class="emoji-btn" data-emoji="🎉">🎉</button>
+                    <button class="emoji-btn" data-emoji="⚠️">⚠️</button>
+                    <button class="emoji-btn" data-emoji="💡">💡</button>
+                    <button class="emoji-btn" data-emoji="❤️">❤️</button>
+                    <button class="emoji-btn" data-emoji="⭐">⭐</button>
+                    <button class="emoji-btn" data-emoji="🎁">🎁</button>
+                    <button class="emoji-btn" data-emoji="📸">📸</button>
+                    <button class="emoji-btn" data-emoji="🚀">🚀</button>
+                    <button class="emoji-btn" data-emoji="💎">💎</button>
+                    <button class="emoji-btn" data-emoji="🔥">🔥</button>
+                </div>
+            </div>
+            <button class="btn btn-gold" id="submitNotifBtn"><i class="fas fa-paper-plane"></i> Kirim</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL MAINTENANCE -->
+<div class="modal-overlay" id="maintenanceModal">
+    <div class="modal" style="max-height:90vh">
+        <div class="modal-header" style="background:var(--red);color:#fff">
+            <h2 style="color:#fff"><i class="fas fa-tools" style="color:#fff"></i> Set Maintenance</h2>
+            <button class="close-btn" id="closeMaintenanceModal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="maintenance-setup">
+                <div class="maintenance-active-info" id="activeMaintenanceInfo" style="display:none">
+                    <div class="ma-title">🔴 MAINTENANCE AKTIF</div>
+                    <div class="ma-time" id="activeMaintTime">00:00:00</div>
+                    <div class="ma-until" id="activeMaintUntil">Sampai: --</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-clock"></i> Waktu Hitung Mundur</label>
+                    <div class="time-picker-row">
+                        <select id="maintHoursInput">
+                            <option value="0">0 jam</option><option value="1">1 jam</option><option value="2">2 jam</option>
+                            <option value="3">3 jam</option><option value="4">4 jam</option><option value="6">6 jam</option>
+                            <option value="12">12 jam</option><option value="24">24 jam</option>
+                        </select>
+                        <select id="maintMinutesInput">
+                            <option value="0">0 mnt</option><option value="5">5 mnt</option><option value="10">10 mnt</option>
+                            <option value="15">15 mnt</option><option value="30">30 mnt</option><option value="45">45 mnt</option>
+                        </select>
+                        <select id="maintSecondsInput">
+                            <option value="0">0 dtk</option><option value="10">10 dtk</option><option value="30">30 dtk</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-hourglass-end"></i> Durasi Maintenance</label>
+                    <select id="maintDurationInput" style="width:100%;background:var(--surface);border:var(--border-w) solid #000;border-radius:8px;padding:12px;color:#000;font-size:14px;outline:none;cursor:pointer;font-weight:800;font-family:'Space Grotesk',sans-serif;box-shadow:var(--shadow-sm);appearance:none">
+                        <option value="15">15 menit</option><option value="30">30 menit</option>
+                        <option value="60" selected>1 jam</option><option value="120">2 jam</option>
+                        <option value="180">3 jam</option><option value="360">6 jam</option>
+                        <option value="720">12 jam</option><option value="1440">24 jam</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-comment"></i> Alasan (opsional)</label>
+                    <textarea class="form-textarea" id="maintReasonInput" placeholder="Contoh: Update fitur..." maxlength="200" style="min-height:60px"></textarea>
+                </div>
+                <div class="maintenance-preview" id="maintPreview">
+                    <strong>📋 Preview</strong>
+                    <span id="previewText">Atur waktu di atas untuk melihat preview</span>
+                </div>
+                <button class="btn btn-danger" id="startMaintenanceBtn" style="margin-bottom:8px;"><i class="fas fa-power-off"></i> Mulai Hitung Mundur</button>
+                <button class="btn btn-secondary" id="cancelMaintenanceBtn" style="display:none;"><i class="fas fa-times"></i> Batal Maintenance</button>
+                <button class="btn btn-danger" id="instantMaintenanceBtn" style="margin-top:8px;"><i class="fas fa-bolt"></i> Langsung Maintenance</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CHAT -->
+<div class="modal-overlay" id="chatModal">
+    <div class="chat-modal">
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <div class="chat-avatar"><i class="fas fa-crown"></i></div>
+                <div class="chat-title-text">
+                    <span class="chat-name">Chat Owner <span class="chat-owner-badge">👑</span></span>
+                    <span class="chat-status" id="chatStatusText"><span class="dot"></span> Online</span>
+                </div>
+            </div>
+            <div style="display:flex;gap:8px">
+                <button class="chat-owner-btn" id="chatOwnerManageBtn" title="Kelola" style="display:none;"><i class="fas fa-cog"></i></button>
+                <button class="close-btn" id="closeChatModal"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div class="chat-closed-banner" id="chatClosedBanner">
+            <span class="big">🔒 Chat Sedang Ditutup</span>
+            <span class="small" id="chatClosedInfo">Owner sedang tidak menerima pesan</span>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-status-indicator" id="chatStatusIndicator"><i class="fas fa-circle"></i> <span id="chatStatusLabel">Memuat status...</span></div>
+        <div class="chat-input-area" id="chatInputArea">
+            <div class="chat-input-row">
+                <textarea id="chatInput" placeholder="Tulis pesan..." rows="1"></textarea>
+                <button class="chat-send-btn" id="chatSendBtn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CHAT SETTINGS -->
+<div class="modal-overlay" id="chatSettingsModal">
+    <div class="modal" style="max-height:85vh">
+        <div class="modal-header" style="background:var(--cyan)">
+            <h2><i class="fas fa-cog"></i> Pengaturan Chat</h2>
+            <button class="close-btn" id="closeChatSettingsModal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-clock"></i> Jadwal Chat Aktif</label>
+                <div class="chat-schedule-row">
+                    <div><label>Jam Buka</label><input type="time" id="chatOpenTime" value="08:00"></div>
+                    <div><label>Jam Tutup</label><input type="time" id="chatCloseTime" value="22:00"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-ban"></i> Tutup Chat Manual</label>
+                <div class="toggle-row" style="margin-bottom:0">
+                    <div class="toggle-info"><i class="fas fa-lock"></i><div class="toggle-text"><span class="toggle-title">Paksa Tutup Chat</span><span class="toggle-desc">Nonaktifkan sekarang</span></div></div>
+                    <label class="switch"><input type="checkbox" id="chatForceCloseToggle"><span class="slider"></span></label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-bullhorn"></i> Pesan Tutup</label>
+                <input type="text" class="form-input" id="chatClosedMessage" placeholder="Owner istirahat, buka jam 08:00" maxlength="100">
+            </div>
+            <button class="btn btn-primary" id="saveChatSettingsBtn"><i class="fas fa-check"></i> Simpan</button>
+            <button class="btn btn-secondary" id="manageChatMessagesBtn" style="margin-top:8px;"><i class="fas fa-list"></i> Kelola Pesan <span id="chatMsgCount" style="background:#000;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;margin-left:6px;font-weight:800">0</span></button>
+            <button class="btn btn-danger" id="clearAllChatBtn" style="margin-top:8px;"><i class="fas fa-trash"></i> Hapus Semua Chat</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL MANAGE MSG -->
+<div class="modal-overlay" id="manageChatModal">
+    <div class="modal" style="max-height:85vh">
+        <div class="modal-header" style="background:var(--cyan)">
+            <h2><i class="fas fa-list"></i> Kelola Pesan</h2>
+            <button class="close-btn" id="closeManageChatModal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="msg-list" id="manageMsgList"></div>
+    </div>
+</div>
+
+<!-- MODAL DOWNLOADER -->
+<div class="modal-overlay" id="dlModal">
+    <div class="dl-modal">
+        <div class="dl-header">
+            <h2><i class="fas fa-download"></i> Video Downloader</h2>
+            <button class="close-btn" id="closeDlModal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="dl-body">
+            <div class="dl-platform-tabs">
+                <button class="dl-platform-tab active tiktok" data-platform="tiktok">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+                    <span>TikTok</span>
+                </button>
+                <button class="dl-platform-tab instagram coming-soon" data-platform="instagram">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    <span>Insta</span>
+                </button>
+                <button class="dl-platform-tab capcut coming-soon" data-platform="capcut">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+                    <span>CapCut</span>
+                </button>
+            </div>
+
+            <!-- TikTok Panel - ACTIVE -->
+            <div class="dl-panel active" id="panel-tiktok">
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-link"></i> Paste Link TikTok</label>
+                    <input type="text" class="dl-input" id="tiktokUrlInput" placeholder="https://vt.tiktok.com/xxx" autocomplete="off" spellcheck="false">
+                    <div class="dl-examples">
+                        <div class="dl-example-chip" onclick="setDlExample('tiktok','vt')">vt.tiktok</div>
+                        <div class="dl-example-chip" onclick="setDlExample('tiktok','vm')">vm.tiktok</div>
+                        <div class="dl-example-chip" onclick="setDlExample('tiktok','www')">www.tiktok</div>
+                    </div>
+                </div>
+                <button class="dl-btn tiktok" id="tiktokProcessBtn"><i class="fas fa-bolt"></i> Proses Video</button>
+                <div class="dl-loading" id="tiktokLoading"><i class="fas fa-spinner"></i><p style="margin-top:12px;font-size:13px;font-weight:700" id="tiktokLoadingText">Mengambil data...</p></div>
+                <div class="dl-error" id="tiktokError"><i class="fas fa-exclamation-circle"></i> <span id="tiktokErrorText">Gagal</span></div>
+                <div class="dl-result" id="tiktokResult">
+                    <video class="dl-video-preview" id="tiktokVideoPreview" controls playsinline></video>
+                    <div class="dl-info">
+                        <div class="dl-title" id="tiktokTitle">-</div>
+                        <div class="dl-author" id="tiktokAuthor"><i class="fas fa-user"></i> -</div>
+                    </div>
+                    <div class="dl-dl-buttons">
+                        <button class="dl-dl-btn tiktok-primary" id="tiktokDlHd"><i class="fas fa-download"></i> HD (No WM)</button>
+                        <button class="dl-dl-btn secondary" id="tiktokDlSd"><i class="fas fa-download"></i> SD</button>
+                        <button class="dl-dl-btn secondary" id="tiktokDlAudio"><i class="fas fa-music"></i> Audio</button>
+                        <button class="dl-dl-btn secondary" id="tiktokDlCover"><i class="fas fa-image"></i> Cover</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instagram Panel - COMING SOON -->
+            <div class="dl-panel" id="panel-instagram">
+                <div class="coming-soon-panel">
+                    <div class="cs-icon"><i class="fab fa-instagram"></i></div>
+                    <div class="cs-title">Coming Soon</div>
+                    <div class="cs-desc">Fitur downloader Instagram sedang dalam pengembangan. Stay tuned ya!</div>
+                    <div class="cs-badge"><i class="fas fa-clock"></i> Segera Hadir</div>
+                    <div class="cs-note">Instagram Downloader</div>
+                </div>
+            </div>
+
+            <!-- CapCut Panel - COMING SOON -->
+            <div class="dl-panel" id="panel-capcut">
+                <div class="coming-soon-panel">
+                    <div class="cs-icon"><i class="fas fa-video"></i></div>
+                    <div class="cs-title">Coming Soon</div>
+                    <div class="cs-desc">Fitur downloader CapCut sedang dalam pengembangan. Stay tuned ya!</div>
+                    <div class="cs-badge"><i class="fas fa-clock"></i> Segera Hadir</div>
+                    <div class="cs-note">CapCut Template Downloader</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL UPGRADE -->
+<div class="modal-overlay" id="upgradeModal">
+    <div class="upgrade-modal">
+        <div class="upgrade-header">
+            <h2><i class="fas fa-arrow-up"></i> Upgrade Index</h2>
+            <button class="close-btn" id="closeUpgradeModal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="upgrade-body">
+            <div class="upgrade-info">
+                <strong>⚠️ Perhatian</strong>
+                Fitur ini hanya untuk Owner. Paste kode HTML baru di bawah, lalu klik "Ubah Baru".
+            </div>
+            <div class="form-group">
+                <label class="form-label"><i class="fas fa-code"></i> Kode HTML Baru</label>
+                <textarea class="upgrade-textarea" id="upgradeCodeInput" placeholder="Paste full HTML baru di sini..."></textarea>
+            </div>
+            <div class="upgrade-actions">
+                <button class="btn btn-secondary" id="cancelUpgradeBtn"><i class="fas fa-times"></i> Batal</button>
+                <button class="btn btn-upgrade" id="applyUpgradeBtn"><i class="fas fa-check"></i> Ubah Baru</button>
+            </div>
+            <div class="upgrade-note">💾 Data galeri & pengaturan kamu tetap aman.</div>
+        </div>
+    </div>
+</div>
+
+<!-- CONFIRM -->
+<div class="confirm-overlay" id="confirmDialog">
+    <div class="confirm-box">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3 id="confirmTitle">Hapus Media?</h3>
+        <p id="confirmMessage">Media ini akan dihapus permanen.</p>
+        <div class="confirm-actions">
+            <button class="btn btn-secondary" id="cancelDelete">Batal</button>
+            <button class="btn btn-danger" id="confirmDelete">Hapus</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastText">Berhasil</span></div>
+
+<script>
+'use strict';
+
+const OWNER_SECRET_CODE = 'rapzx290859';
+const OWNER_MODE_KEY = 'mv_owner_mode';
+const MAINTENANCE_KEY = 'mv_maintenance';
+const CHAT_STORAGE = 'mv_chat_messages';
+const CHAT_SETTINGS_KEY = 'mv_chat_settings';
+const CUSTOM_HTML_KEY = 'mv_custom_html_v8';
+
+const state = {
+    allMedia: [], currentSection: 'my', currentFilter: 'all', currentSearch: '',
+    pendingDeleteId: null, pendingFile: null, objectUrls: new Set(), deviceId: null,
+    chatRefreshTimer: null, forceOwnerMedia: false,
+    tiktokData: null,
+    maintenanceTickerInterval: null, currentPlatform: 'tiktok'
+};
+
+const DB_NAME = 'MediaVaultDB', DB_VERSION = 2, STORE_NAME = 'media';
+const COMMUNITY_KEY = 'mv_community', SAVED_KEY = 'mv_saved', DEVICE_KEY = 'mv_device_id';
+const DEMO_INIT_KEY = 'mv_demo_v2';
+const NOTIF_STORAGE = 'mv_notifications', NOTIF_LAST_CHECK = 'mv_notif_last_check';
+
+let db = null;
+let isOwner = false;
+let selectedEmoji = '🔔';
+
+function updateFabVisibility() {
+    const anyModalOpen = document.querySelector('.modal-overlay.active, .confirm-overlay.active');
+    const fab = document.getElementById('addBtn');
+    if (!fab) return;
+    if (anyModalOpen) fab.classList.add('hidden');
+    else fab.classList.remove('hidden');
+}
+const fabObserver = new MutationObserver(() => updateFabVisibility());
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.modal-overlay, .confirm-overlay').forEach(m => {
+        fabObserver.observe(m, { attributes: true, attributeFilter: ['class'] });
+    });
+    setTimeout(updateFabVisibility, 100);
+});
+
+function initDeviceId() {
+    let id = localStorage.getItem(DEVICE_KEY);
+    if (!id) { id = 'device_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); localStorage.setItem(DEVICE_KEY, id); }
+    state.deviceId = id;
+}
+
+function getUserName() {
+    let name = localStorage.getItem('mv_username');
+    if (!name) { name = 'User_' + state.deviceId.slice(-6); localStorage.setItem('mv_username', name); }
+    return name;
+}
+
+let deferredPrompt = null;
+const installBanner = document.getElementById('installBanner');
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; installBanner.style.display = 'flex'; });
+installBanner.addEventListener('click', async () => { if (!deferredPrompt) return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; installBanner.style.display = 'none'; });
+
+function openDB() {
+    return new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onupgradeneeded = (e) => {
+            const database = e.target.result;
+            if (!database.objectStoreNames.contains(STORE_NAME)) {
+                const store = database.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                store.createIndex('name', 'name', { unique: false });
+                store.createIndex('type', 'type', { unique: false });
+                store.createIndex('createdAt', 'createdAt', { unique: false });
+            }
+        };
+        req.onsuccess = (e) => { db = e.target.result; resolve(db); };
+        req.onerror = (e) => reject(e.target.error);
+    });
+}
+function dbAdd(m) { return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const r = tx.objectStore(STORE_NAME).add(m); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); }
+function dbGetAll() { return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readonly'); const r = tx.objectStore(STORE_NAME).getAll(); r.onsuccess = () => res(r.result || []); r.onerror = () => rej(r.error); }); }
+function dbDelete(id) { return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const r = tx.objectStore(STORE_NAME).delete(id); r.onsuccess = () => res(); r.onerror = () => rej(r.error); }); }
+
+function safeParse(str, fb) { try { return JSON.parse(str); } catch (e) { return fb; } }
+function getSavedIds() { return safeParse(localStorage.getItem(SAVED_KEY), []) || []; }
+function addSavedId(id) { const s = getSavedIds(); if (!s.includes(id)) { s.push(id); localStorage.setItem(SAVED_KEY, JSON.stringify(s)); } }
+function removeSavedId(id) { const s = getSavedIds().filter(x => x !== id); localStorage.setItem(SAVED_KEY, JSON.stringify(s)); }
+function isSaved(id) { return getSavedIds().includes(id); }
+function getCommunity() { return safeParse(localStorage.getItem(COMMUNITY_KEY), []) || []; }
+function saveCommunity(l) { try { localStorage.setItem(COMMUNITY_KEY, JSON.stringify(l)); } catch (e) {} }
+
+function createDemoSvg(type) {
+    const svgs = {
+        sunset: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 700"><rect width="400" height="450" fill="#FF8C42"/><circle cx="200" cy="380" r="60" fill="#FFE500" stroke="#000" stroke-width="6"/><rect y="450" width="400" height="250" fill="#000"/><text x="200" y="600" text-anchor="middle" fill="#fff" font-family="sans-serif" font-size="28" font-weight="bold">Sunset</text></svg>`,
+        cat: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 700"><rect width="400" height="700" fill="#B983FF"/><circle cx="200" cy="350" r="130" fill="#FFE500" stroke="#000" stroke-width="8"/><circle cx="155" cy="300" r="20" fill="#000"/><circle cx="245" cy="300" r="20" fill="#000"/><text x="200" y="580" text-anchor="middle" fill="#000" font-family="sans-serif" font-size="28" font-weight="bold">Kucing</text></svg>`,
+        coffee: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 700"><rect width="400" height="700" fill="#6BCB77"/><path d="M120 350 L130 500 Q200 520 270 500 L280 350 Z" fill="#8b4513" stroke="#000" stroke-width="6"/><ellipse cx="200" cy="350" rx="80" ry="15" fill="#6b3410" stroke="#000" stroke-width="6"/><text x="200" y="620" text-anchor="middle" fill="#000" font-family="sans-serif" font-size="28" font-weight="bold">Kopi</text></svg>`,
+        fuji: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 700"><rect width="400" height="700" fill="#00D9FF"/><path d="M0 500 L200 250 L400 500 Z" fill="#4D96FF" stroke="#000" stroke-width="6"/><path d="M150 320 L200 250 L250 320 L230 320 L215 300 L200 320 L185 300 L170 320 Z" fill="#fff" stroke="#000" stroke-width="4"/><text x="200" y="620" text-anchor="middle" fill="#000" font-family="sans-serif" font-size="28" font-weight="bold">Fuji</text></svg>`
+    };
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgs[type]);
+}
+
+function initDemoCommunity() {
+    if (localStorage.getItem(DEMO_INIT_KEY) === 'v2') return;
+    if (getCommunity().length > 0) return;
+    const demos = [
+        { id: 'demo_sunset', name: 'Sunset Bali', description: 'Pemandangan matahari terbenam di pantai Bali.', type: 'image/svg+xml', size: 0, isPublic: true, ownerId: 'demo_user_1', ownerName: 'Wanderlust', demoUrl: createDemoSvg('sunset'), createdAt: Date.now() - 86400000 * 2 },
+        { id: 'demo_cat', name: 'Kucing Lucu', description: 'Kucing imut yang lagi tidur siang.', type: 'image/svg+xml', size: 0, isPublic: true, ownerId: 'demo_user_2', ownerName: 'CatLover', demoUrl: createDemoSvg('cat'), createdAt: Date.now() - 86400000 * 5 },
+        { id: 'demo_coffee', name: 'Kopi Pagi', description: 'Secangkir kopi hangat untuk memulai hari.', type: 'image/svg+xml', size: 0, isPublic: true, ownerId: 'demo_user_3', ownerName: 'CoffeeTime', demoUrl: createDemoSvg('coffee'), createdAt: Date.now() - 86400000 * 7 },
+        { id: 'demo_fuji', name: 'Gunung Fuji', description: 'Pemandangan Gunung Fuji yang megah.', type: 'image/svg+xml', size: 0, isPublic: true, ownerId: 'demo_user_4', ownerName: 'JapanTrip', demoUrl: createDemoSvg('fuji'), createdAt: Date.now() - 86400000 * 10 }
+    ];
+    saveCommunity(demos);
+    localStorage.setItem(DEMO_INIT_KEY, 'v2');
+}
+
+function createObjectUrl(blob) { const u = URL.createObjectURL(blob); state.objectUrls.add(u); return u; }
+function revokeAllObjectUrls() { state.objectUrls.forEach(u => { try { URL.revokeObjectURL(u); } catch (e) {} }); state.objectUrls.clear(); }
+
+let toastTimer = null;
+function showToast(text, type) {
+    type = type || 'success';
+    const toast = document.getElementById('toast');
+    const toastText = document.getElementById('toastText');
+    const icon = toast.querySelector('i');
+    toastText.textContent = text;
+    toast.classList.remove('error', 'warning');
+    if (type === 'error') { toast.classList.add('error'); icon.className = 'fas fa-exclamation-circle'; }
+    else if (type === 'warning') { toast.classList.add('warning'); icon.className = 'fas fa-exclamation-triangle'; }
+    else { icon.className = 'fas fa-check-circle'; }
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+function escapeHtml(text) { const d = document.createElement('div'); d.textContent = String(text || ''); return d.innerHTML; }
+function formatDate(ts) { const df = Date.now() - ts; if (df < 60000) return 'Baru saja'; if (df < 3600000) return Math.floor(df / 60000) + ' mnt'; if (df < 86400000) return Math.floor(df / 3600000) + ' jam'; if (df < 604800000) return Math.floor(df / 86400000) + ' hr'; return new Date(ts).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }); }
+function formatSize(b) { if (!b) return '0 B'; if (b < 1024) return b + ' B'; if (b < 1048576) return (b / 1024).toFixed(1) + ' KB'; if (b < 1073741824) return (b / 1048576).toFixed(1) + ' MB'; return (b / 1073741824).toFixed(2) + ' GB'; }
+function isMyMedia(item) { return item && item.ownerId === state.deviceId; }
+function isDemoItem(item) { return item && String(item.id).startsWith('demo_'); }
+function isVideoType(t) { return t && t.startsWith('video/'); }
+function isOwnerMedia(item) { return item && item.isOwnerMedia === true; }
+function getMediaPreviewUrl(item) { if (!item) return ''; if (item.demoUrl) return item.demoUrl; if (item.file && item.file instanceof Blob) return createObjectUrl(item.file); return ''; }
+function formatHMS(ms) { if (ms < 0) ms = 0; const ts = Math.floor(ms/1000); const h = Math.floor(ts/3600); const m = Math.floor((ts%3600)/60); const s = ts%60; return { h, m, s }; }
+function pad2(n) { return String(n).padStart(2, '0'); }
+function formatTime12(timeStr) { if (!timeStr) return '--:--'; const [h, m] = timeStr.split(':').map(Number); const ampm = h >= 12 ? 'PM' : 'AM'; const h12 = h % 12 || 12; return `${h12}:${pad2(m)} ${ampm}`; }
+
+function getFilteredMedia() {
+    const s = state.currentSearch.toLowerCase().trim();
+    let src = [];
+    if (state.currentSection === 'my') {
+        const mine = state.allMedia.filter(isMyMedia);
+        const comm = getCommunity();
+        const saved = getSavedIds();
+        const savedComm = comm.filter(m => saved.includes(m.id));
+        src = [...mine, ...savedComm];
+    } else {
+        const comm = getCommunity().filter(m => m.isPublic);
+        const myPub = state.allMedia.filter(m => isMyMedia(m) && m.isPublic);
+        src = [...myPub, ...comm];
+        const seen = new Set();
+        src = src.filter(m => { if (seen.has(m.id)) return false; seen.add(m.id); return true; });
+    }
+    if (state.currentFilter === 'video') src = src.filter(m => isVideoType(m.type));
+    else if (state.currentFilter === 'image') src = src.filter(m => m.type && m.type.startsWith('image/'));
+    else if (state.currentFilter === 'owner') src = src.filter(m => isOwnerMedia(m));
+    if (s) src = src.filter(m => (m.name || '').toLowerCase().includes(s) || (m.description || '').toLowerCase().includes(s));
+    src.sort((a, b) => b.createdAt - a.createdAt);
+    return src;
+}
+
+function renderGallery() {
+    const g = document.getElementById('gallery');
+    const filtered = getFilteredMedia();
+    const myCount = state.allMedia.filter(isMyMedia).length + getCommunity().filter(m => getSavedIds().includes(m.id)).length;
+    document.getElementById('myCount').textContent = myCount;
+    document.getElementById('communityCount').textContent = getCommunity().filter(m => m.isPublic).length;
+    revokeAllObjectUrls();
+    if (filtered.length === 0) {
+        const isMy = state.currentSection === 'my';
+        g.innerHTML = `<div class="empty-state"><i class="fas fa-${isMy ? 'photo-film' : 'globe'}"></i><h3>${isMy ? 'Koleksi Kosong' : 'Belum Ada Konten'}</h3><p>${isMy ? 'Klik tombol + untuk menambah media' : 'Belum ada media publik'}</p></div>`;
+        return;
+    }
+    const frag = document.createDocumentFragment();
+    filtered.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'gallery-item';
+        el.dataset.id = item.id;
+        el.onclick = () => openDetail(item.id);
+        const isVid = isVideoType(item.type);
+        const isOwn = isMyMedia(item);
+        const saved = isSaved(item.id);
+        const isOwnerItem = isOwnerMedia(item);
+        const url = getMediaPreviewUrl(item);
+        let badge = '';
+        if (isOwnerItem) badge = `<div class="rainbow-badge"><i class="fas fa-crown"></i> By Owner</div>`;
+        else if (state.currentSection === 'community') {
+            if (isOwn) badge = `<div class="owner-badge"><i class="fas fa-user"></i> Milikmu</div>`;
+            else if (saved) badge = `<div class="owner-badge saved"><i class="fas fa-bookmark"></i> Saved</div>`;
+            else badge = `<div class="owner-badge public"><i class="fas fa-globe"></i> ${escapeHtml(item.ownerName || 'Publik')}</div>`;
+        } else if (saved && !isOwn) badge = `<div class="owner-badge saved"><i class="fas fa-bookmark"></i> Komunitas</div>`;
+        let mediaHtml = '';
+        if (url) {
+            if (isVid) mediaHtml = `<video class="media-preview" src="${url}" muted playsinline preload="metadata"></video><div class="play-icon"><i class="fas fa-play"></i></div>`;
+            else mediaHtml = `<img class="media-preview" src="${url}" alt="${escapeHtml(item.name)}" loading="lazy">`;
+        } else mediaHtml = `<div class="media-preview" style="display:flex;align-items:center;justify-content:center;color:#444;font-size:30px"><i class="fas fa-${isVid ? 'video' : 'image'}"></i></div>`;
+        el.innerHTML = `${mediaHtml}${badge}<div class="type-badge"><i class="fas fa-${isVid ? 'video' : 'image'}"></i> ${isVid ? 'Video' : 'Foto'}</div><div class="media-overlay"><div class="media-title">${escapeHtml(item.name)}</div><div class="media-meta"><span><i class="fas fa-clock"></i> ${formatDate(item.createdAt)}</span></div></div>`;
+        frag.appendChild(el);
+    });
+    g.innerHTML = '';
+    g.appendChild(frag);
+}
+
+function stopAllVideos() { document.querySelectorAll('video').forEach(v => { try { v.pause(); v.currentTime = 0; } catch (e) {} }); }
+
+const addBtn = document.getElementById('addBtn');
+const addModal = document.getElementById('addModal');
+const closeAddModal = document.getElementById('closeAddModal');
+const fileUpload = document.getElementById('fileUpload');
+const nameInput = document.getElementById('nameInput');
+const descInput = document.getElementById('descInput');
+const submitAddBtn = document.getElementById('submitAddBtn');
+const publicToggle = document.getElementById('publicToggle');
+const ownerBadgeToggle = document.getElementById('ownerBadgeToggle');
+const ownerBadgeToggleRow = document.getElementById('ownerBadgeToggleRow');
+
+function resetFileUpload() {
+    state.pendingFile = null;
+    fileUpload.classList.remove('has-file');
+    fileUpload.innerHTML = `<input type="file" id="fileInput" accept="video/*,image/*"><i class="fas fa-cloud-upload-alt upload-icon"></i><div class="upload-text">Ketuk untuk pilih file</div><div class="upload-hint">Video atau Foto (max 100MB)</div>`;
+    attachFileInputListener();
+}
+function attachFileInputListener() { const i = document.getElementById('fileInput'); if (i) i.addEventListener('change', (e) => { if (e.target.files && e.target.files.length) handleFileSelect(e.target.files[0]); }); }
+function resetAddForm() {
+    nameInput.value = ''; descInput.value = ''; publicToggle.checked = false; ownerBadgeToggle.checked = false;
+    if (isOwner) ownerBadgeToggleRow.style.display = 'flex';
+    else ownerBadgeToggleRow.style.display = 'none';
+    resetFileUpload();
+}
+
+function handleFileSelect(file) {
+    if (!file) return;
+    if (!file.type.startsWith('video/') && !file.type.startsWith('image/')) { showToast('Hanya video atau foto', 'error'); return; }
+    if (file.size > 100 * 1024 * 1024) { showToast('File terlalu besar (max 100MB)', 'error'); return; }
+    state.pendingFile = file;
+    const url = createObjectUrl(file);
+    const isVid = isVideoType(file.type);
+    fileUpload.classList.add('has-file');
+    fileUpload.innerHTML = `<input type="file" id="fileInput" accept="video/*,image/*">${isVid ? `<video class="file-preview" src="${url}" controls playsinline muted></video>` : `<img class="file-preview" src="${url}" alt="preview">`}<button class="file-remove-x" id="removeFileX" type="button"><i class="fas fa-times"></i></button><div class="file-preview-info"><div class="file-meta"><i class="fas fa-${isVid ? 'video' : 'image'}"></i><span>${escapeHtml(file.name)} • ${formatSize(file.size)}</span></div></div>`;
+    if (!nameInput.value.trim()) nameInput.value = file.name.replace(/\.[^/.]+$/, '');
+    const rb = document.getElementById('removeFileX');
+    if (rb) rb.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); resetFileUpload(); });
+}
+
+addBtn.addEventListener('click', () => { addModal.classList.add('active'); resetAddForm(); });
+closeAddModal.addEventListener('click', () => addModal.classList.remove('active'));
+addModal.addEventListener('click', (e) => { if (e.target === addModal) addModal.classList.remove('active'); });
+fileUpload.addEventListener('click', (e) => { if (!e.target.closest('.file-remove-x')) { const i = document.getElementById('fileInput'); if (i) i.click(); } });
+
+submitAddBtn.addEventListener('click', async () => {
+    if (!state.pendingFile) { showToast('Pilih file dulu', 'error'); return; }
+    const name = nameInput.value.trim();
+    if (!name) { showToast('Masukkan nama', 'error'); nameInput.focus(); return; }
+    submitAddBtn.disabled = true;
+    submitAddBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+    try {
+        const isOwnerMark = isOwner && ownerBadgeToggle.checked;
+        await dbAdd({
+            name, description: descInput.value.trim(),
+            type: state.pendingFile.type, size: state.pendingFile.size,
+            file: state.pendingFile, ownerId: state.deviceId,
+            ownerName: isOwnerMark ? 'Owner' : 'Saya',
+            isPublic: publicToggle.checked || isOwnerMark,
+            isOwnerMedia: isOwnerMark, createdAt: Date.now()
+        });
+        state.allMedia = await dbGetAll();
+        addModal.classList.remove('active');
+        resetAddForm();
+        renderGallery();
+        showToast(isOwnerMark ? '👑 Media By Owner ditambahkan!' : (publicToggle.checked ? 'Dibagikan ke komunitas!' : 'Media ditambahkan!'));
+    } catch (e) { showToast('Gagal: ' + e.message, 'error'); }
+    finally { submitAddBtn.innerHTML = '<i class="fas fa-plus"></i> Tambahkan'; submitAddBtn.disabled = false; }
+});
+
+const detailModal = document.getElementById('detailModal');
+const closeDetailModal = document.getElementById('closeDetailModal');
+const detailContent = document.getElementById('detailContent');
+function findItem(id) { let i = state.allMedia.find(m => String(m.id) === String(id)); if (i) return i; return getCommunity().find(m => String(m.id) === String(id)); }
+function closeDetail() { detailContent.querySelectorAll('video').forEach(v => { try { v.pause(); v.removeAttribute('src'); v.load(); } catch (e) {} }); detailModal.classList.remove('active'); }
+closeDetailModal.addEventListener('click', closeDetail);
+detailModal.addEventListener('click', (e) => { if (e.target === detailModal) closeDetail(); });
+
+function openDetail(id) {
+    const item = findItem(id);
+    if (!item) { showToast('Media tidak ditemukan', 'error'); return; }
+    const isOwn = isMyMedia(item);
+    const saved = isSaved(item.id);
+    const isVid = isVideoType(item.type);
+    const isOwnerItem = isOwnerMedia(item);
+    const isCommunity = !isOwn && !isDemoItem(item) && String(item.id).startsWith('demo_') ? false : !isOwn;
+    let url = item.demoUrl || (item.file ? createObjectUrl(item.file) : '');
+    if (!url) { showToast('File tidak tersedia', 'error'); return; }
+    let ob = '';
+    if (isOwnerItem) ob = `<div class="detail-owner rainbow"><i class="fas fa-crown"></i> By Owner</div>`;
+    else if (isOwn) ob = `<div class="detail-owner"><i class="fas fa-user"></i> Koleksi Saya</div>`;
+    else if (saved) ob = `<div class="detail-owner" style="background:var(--green)"><i class="fas fa-bookmark"></i> Tersimpan</div>`;
+    else ob = `<div class="detail-owner" style="background:var(--orange)"><i class="fas fa-globe"></i> ${escapeHtml(item.ownerName || 'Publik')}</div>`;
+    
+    let ah = '';
+    if (isOwn) {
+        // Media sendiri
+        ah = `<button class="btn btn-primary" data-action="download" data-id="${item.id}"><i class="fas fa-download"></i> Download</button><button class="btn btn-secondary" data-action="share" data-id="${item.id}"><i class="fas fa-share-alt"></i> Bagikan</button><button class="btn btn-success" data-action="save-gallery" data-id="${item.id}" style="grid-column:1/-1"><i class="fas fa-bookmark"></i> Simpan ke Galeri</button><button class="btn btn-danger" data-action="delete" data-id="${item.id}" style="grid-column:1/-1"><i class="fas fa-trash"></i> Hapus Media</button>`;
+    } else if (saved) {
+        // Media komunitas yang disimpan
+        ah = `<button class="btn btn-primary" data-action="download" data-id="${item.id}"><i class="fas fa-download"></i> Download</button><button class="btn btn-secondary" data-action="share" data-id="${item.id}"><i class="fas fa-share-alt"></i> Bagikan</button><button class="btn btn-secondary" data-action="unsave" data-id="${item.id}" style="grid-column:1/-1"><i class="fas fa-bookmark-slash"></i> Hapus Tersimpan</button>`;
+        // Owner bisa hapus
+        if (isOwner) {
+            ah += `<button class="btn btn-danger" data-action="owner-delete" data-id="${item.id}" style="grid-column:1/-1"><i class="fas fa-crown"></i> Hapus (Owner)</button>`;
+        }
+    } else {
+        // Media komunitas biasa
+        ah = `<button class="btn btn-primary" data-action="download" data-id="${item.id}"><i class="fas fa-download"></i> Download</button><button class="btn btn-secondary" data-action="share" data-id="${item.id}"><i class="fas fa-share-alt"></i> Bagikan</button><button class="btn btn-success" data-action="save" data-id="${item.id}" style="grid-column:1/-1"><i class="fas fa-bookmark"></i> Simpan ke Koleksi</button>`;
+        // Owner bisa hapus
+        if (isOwner) {
+            ah += `<button class="btn btn-danger" data-action="owner-delete" data-id="${item.id}" style="grid-column:1/-1"><i class="fas fa-crown"></i> Hapus (Owner)</button>`;
+        }
+    }
+    
+    detailContent.innerHTML = `<div class="detail-media-container">${isVid ? `<video class="detail-media" src="${url}" controls playsinline autoplay muted></video>` : `<img class="detail-media" src="${url}" alt="${escapeHtml(item.name)}">`}</div><div class="detail-info">${ob}<div class="detail-title">${escapeHtml(item.name)}</div>${item.description ? `<div class="detail-desc">${escapeHtml(item.description)}</div>` : ''}<div class="detail-meta"><span><i class="fas fa-${isVid ? 'video' : 'image'}"></i> ${isVid ? 'Video' : 'Foto'}</span>${item.size ? `<span><i class="fas fa-hdd"></i> ${formatSize(item.size)}</span>` : ''}<span><i class="fas fa-clock"></i> ${formatDate(item.createdAt)}</span>${item.isPublic ? '<span><i class="fas fa-globe"></i> Publik</span>' : ''}</div></div><div class="detail-actions">${ah}</div>`;
+    detailContent.querySelectorAll('[data-action]').forEach(b => b.addEventListener('click', () => handleAction(b.dataset.action, b.dataset.id)));
+    detailModal.classList.add('active');
+}
+
+async function handleAction(a, id) {
+    const item = findItem(id);
+    if (!item) return;
+    switch (a) {
+        case 'download': await downloadMedia(item); break;
+        case 'share': await shareMedia(item); break;
+        case 'save-gallery': await saveToGallery(item); break;
+        case 'save': saveMediaToCollection(item); break;
+        case 'unsave': unsaveMedia(item); break;
+        case 'delete': askDelete(item); break;
+        case 'owner-delete': askOwnerDelete(item); break;
+    }
+}
+
+async function downloadMedia(item) {
+    try {
+        const isVid = isVideoType(item.type);
+        const ext = isVid ? 'mp4' : (item.type.split('/')[1] || 'jpg').replace('svg+xml', 'svg');
+        const fn = (item.name || 'media').replace(/[^a-z0-9]/gi, '_') + '.' + ext;
+        if (item.demoUrl) { const a = document.createElement('a'); a.href = item.demoUrl; a.download = fn; document.body.appendChild(a); a.click(); document.body.removeChild(a); showToast('Download dimulai...'); return; }
+        if (!item.file) { showToast('File tidak tersedia', 'error'); return; }
+        const url = URL.createObjectURL(item.file);
+        const a = document.createElement('a'); a.href = url; a.download = fn;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast('Download dimulai...');
+    } catch (e) { showToast('Gagal download', 'error'); }
+}
+
+async function saveToGallery(item) {
+    if (!item.file) { showToast('Gunakan tombol Download', 'warning'); return; }
+    if (navigator.share && navigator.canShare) {
+        try {
+            const isVid = isVideoType(item.type);
+            const ext = isVid ? 'mp4' : (item.type.split('/')[1] || 'jpg');
+            const f = new File([item.file], `${item.name}.${ext}`, { type: item.type });
+            if (navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], title: item.name, text: item.description || 'Dari MediaVault' }); return; }
+        } catch (e) {}
+    }
+    showToast('Gunakan tombol Download', 'warning');
+}
+
+async function shareMedia(item) {
+    if (navigator.share) {
+        try { await navigator.share({ title: item.name, text: item.description || 'Dari MediaVault' }); return; } catch (e) {}
+    }
+    try { await navigator.clipboard.writeText(`${item.name}\n${item.description || ''}`); showToast('Info disalin'); }
+    catch (e) { showToast('Share tidak didukung', 'error'); }
+}
+
+function saveMediaToCollection(item) { addSavedId(item.id); showToast('✓ Disimpan ke koleksi!'); closeDetail(); renderGallery(); }
+function unsaveMedia(item) { removeSavedId(item.id); showToast('Dihapus dari tersimpan'); closeDetail(); renderGallery(); }
+
+const confirmDialog = document.getElementById('confirmDialog');
+const cancelDelete = document.getElementById('cancelDelete');
+const confirmDeleteBtn = document.getElementById('confirmDelete');
+const confirmTitle = document.getElementById('confirmTitle');
+const confirmMessage = document.getElementById('confirmMessage');
+
+function askDelete(item) {
+    if (!isMyMedia(item)) { showToast('❌ Tidak bisa hapus koleksi orang lain', 'error'); return; }
+    if (isDemoItem(item)) { showToast('❌ Tidak bisa hapus demo', 'error'); return; }
+    state.pendingDeleteId = item.id;
+    state.pendingDeleteIsOwner = false;
+    confirmTitle.textContent = 'Hapus Media?';
+    confirmMessage.textContent = `"${item.name}" akan dihapus permanen.`;
+    confirmDialog.classList.add('active');
+}
+
+// ===== OWNER DELETE - BISA HAPUS MEDIA KOMUNITAS =====
+function askOwnerDelete(item) {
+    if (!isOwner) { showToast('❌ Bukan owner', 'error'); return; }
+    state.pendingDeleteId = item.id;
+    state.pendingDeleteIsOwner = true;
+    confirmTitle.textContent = '👑 Hapus Media?';
+    confirmMessage.textContent = `Hapus "${item.name}" dari komunitas? (Khusus Owner)`;
+    confirmDialog.classList.add('active');
+}
+window.askOwnerDelete = askOwnerDelete;
+
+cancelDelete.addEventListener('click', () => { state.pendingDeleteId = null; state.pendingDeleteIsOwner = false; confirmDialog.classList.remove('active'); });
+
+confirmDeleteBtn.addEventListener('click', async () => {
+    if (state.pendingDeleteId === null) return;
+    const id = state.pendingDeleteId;
+    const isOwnerDelete = state.pendingDeleteIsOwner;
+    
+    // Cek item di allMedia dulu (media sendiri)
+    let item = state.allMedia.find(m => String(m.id) === String(id));
+    let isCommunityItem = false;
+    
+    if (!item) {
+        // Cek di community
+        const community = getCommunity();
+        item = community.find(m => String(m.id) === String(id));
+        if (item) isCommunityItem = true;
+    }
+    
+    if (!item) {
+        showToast('❌ Media tidak ditemukan', 'error');
+        state.pendingDeleteId = null;
+        state.pendingDeleteIsOwner = false;
+        confirmDialog.classList.remove('active');
+        return;
+    }
+    
+    // PROTEKSI: Kalau bukan owner delete, hanya bisa hapus milik sendiri
+    if (!isOwnerDelete && !isMyMedia(item)) {
+        showToast('❌ Tidak bisa hapus koleksi orang lain', 'error');
+        state.pendingDeleteId = null;
+        state.pendingDeleteIsOwner = false;
+        confirmDialog.classList.remove('active');
+        return;
+    }
+    
+    // PROTEKSI: Owner delete harus isOwner
+    if (isOwnerDelete && !isOwner) {
+        showToast('❌ Bukan owner', 'error');
+        state.pendingDeleteId = null;
+        state.pendingDeleteIsOwner = false;
+        confirmDialog.classList.remove('active');
+        return;
+    }
+    
+    try {
+        if (isCommunityItem) {
+            // Hapus dari community
+            const community = getCommunity().filter(m => String(m.id) !== String(id));
+            saveCommunity(community);
+        } else {
+            // Hapus dari IndexedDB
+            await dbDelete(id);
+            state.allMedia = await dbGetAll();
+        }
+        
+        closeDetail();
+        confirmDialog.classList.remove('active');
+        renderGallery();
+        showToast(isOwnerDelete ? '👑 Media komunitas dihapus!' : 'Media dihapus');
+    } catch (e) {
+        showToast('Gagal hapus: ' + e.message, 'error');
+    }
+    finally {
+        state.pendingDeleteId = null;
+        state.pendingDeleteIsOwner = false;
+    }
+});
+
+const searchInput = document.getElementById('searchInput');
+const clearSearch = document.getElementById('clearSearch');
+searchInput.addEventListener('input', (e) => { state.currentSearch = e.target.value; clearSearch.classList.toggle('active', state.currentSearch.length > 0); renderGallery(); });
+clearSearch.addEventListener('click', () => { searchInput.value = ''; state.currentSearch = ''; clearSearch.classList.remove('active'); renderGallery(); });
+document.querySelectorAll('.main-tab').forEach(t => t.addEventListener('click', () => { document.querySelectorAll('.main-tab').forEach(x => x.classList.remove('active')); t.classList.add('active'); state.currentSection = t.dataset.section; renderGallery(); }));
+document.querySelectorAll('.filter-tab').forEach(t => t.addEventListener('click', () => { document.querySelectorAll('.filter-tab').forEach(x => x.classList.remove('active')); t.classList.add('active'); state.currentFilter = t.dataset.filter; renderGallery(); }));
+
+const infoModal = document.getElementById('infoModal');
+document.getElementById('infoBtn').addEventListener('click', () => infoModal.classList.add('active'));
+document.getElementById('closeInfoModal').addEventListener('click', () => infoModal.classList.remove('active'));
+infoModal.addEventListener('click', (e) => { if (e.target === infoModal) infoModal.classList.remove('active'); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) stopAllVideos(); });
+window.addEventListener('blur', () => stopAllVideos());
+
+// ===== NOTIFIKASI =====
+const notifBtn = document.getElementById('notifBtn');
+const notifModal = document.getElementById('notifModal');
+const closeNotifModal = document.getElementById('closeNotifModal');
+const addNotifBtn = document.getElementById('addNotifBtn');
+const ownerLoginBtn = document.getElementById('ownerLoginBtn');
+const notifList = document.getElementById('notifList');
+const notifDot = document.getElementById('notifDot');
+const notifSubText = document.getElementById('notifSubText');
+const notifAvatar = document.getElementById('notifAvatar');
+const ownerCodeModal = document.getElementById('ownerCodeModal');
+const closeOwnerModal = document.getElementById('closeOwnerModal');
+const ownerCodeInput = document.getElementById('ownerCodeInput');
+const verifyOwnerBtn = document.getElementById('verifyOwnerBtn');
+const logoutOwnerBtn = document.getElementById('logoutOwnerBtn');
+const ownerMenuModal = document.getElementById('ownerMenuModal');
+const closeOwnerMenuModal = document.getElementById('closeOwnerMenuModal');
+const createNotifModal = document.getElementById('createNotifModal');
+const closeCreateNotifModal = document.getElementById('closeCreateNotifModal');
+const notifTitleInput = document.getElementById('notifTitleInput');
+const notifMessageInput = document.getElementById('notifMessageInput');
+const submitNotifBtn = document.getElementById('submitNotifBtn');
+
+const NOTIF_TEMPLATES = {
+    morning: { icon: '🌅', title: 'Selamat Pagi!', message: 'Semangat untuk hari ini! Jangan lupa upload foto/video kamu ke MediaVault ya.', type: 'morning' },
+    noon: { icon: '☀️', title: 'Selamat Siang!', message: 'Sudah makan siang? Istirahat dulu, terus cek koleksi media kamu di MediaVault.', type: 'noon' },
+    afternoon: { icon: '🌤️', title: 'Selamat Sore!', message: 'Waktunya santai! Upload momen sore kamu ke MediaVault.', type: 'afternoon' },
+    evening: { icon: '🌙', title: 'Selamat Malam!', message: 'Selamat istirahat! Jangan lupa backup kenangan hari ini ke MediaVault.', type: 'evening' },
+    sunday: { icon: '🎉', title: 'Selamat Hari Minggu!', message: 'Adalah minggu mu dengan mengupload video / foto di MediaVault!', type: 'sunday' }
+};
+
+function loadNotifications() { return safeParse(localStorage.getItem(NOTIF_STORAGE), []) || []; }
+function saveNotifications(list) { try { localStorage.setItem(NOTIF_STORAGE, JSON.stringify(list.slice(0, 100))); } catch (e) {} }
+
+function addNotification(template) {
+    const list = loadNotifications();
+    const today = new Date().toDateString();
+    const key = `${template.type}_${today}`;
+    if (!template.isOwner) {
+        const isDupe = list.some(n => n.dedupeKey === key);
+        if (isDupe) return false;
+    }
+    const notif = {
+        id: 'notif_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+        title: template.title, message: template.message, icon: template.icon,
+        type: template.type || 'info', isOwner: template.isOwner || false,
+        createdAt: Date.now(), read: false, dedupeKey: template.isOwner ? null : key
+    };
+    list.unshift(notif);
+    saveNotifications(list);
+    updateNotifBadge();
+    renderNotifications();
+    if ('Notification' in window && Notification.permission === 'granted') {
+        try { new Notification(template.title, { body: template.message, tag: notif.id }); } catch (e) {}
+    }
+    return true;
+}
+
+function deleteNotification(id) {
+    if (!isOwner) { showToast('❌ Hanya owner', 'error'); return; }
+    const list = loadNotifications().filter(n => n.id !== id);
+    saveNotifications(list);
+    renderNotifications();
+    showToast('Notifikasi dihapus');
+}
+
+function checkSchedule() {
+    const now = new Date();
+    const hour = now.getHours();
+    const day = now.getDay();
+    if (day === 0) addNotification(NOTIF_TEMPLATES.sunday);
+    if (hour === 5) addNotification(NOTIF_TEMPLATES.morning);
+    else if (hour === 12) addNotification(NOTIF_TEMPLATES.noon);
+    else if (hour === 16) addNotification(NOTIF_TEMPLATES.afternoon);
+    else if (hour === 18) addNotification(NOTIF_TEMPLATES.evening);
+    localStorage.setItem(NOTIF_LAST_CHECK, Date.now().toString());
+}
+
+function checkMissedNotifications() {
+    const lastCheck = parseInt(localStorage.getItem(NOTIF_LAST_CHECK) || '0');
+    const now = Date.now();
+    if (!lastCheck) { localStorage.setItem(NOTIF_LAST_CHECK, now.toString()); checkSchedule(); return; }
+    const lastDate = new Date(lastCheck);
+    const nowDate = new Date(now);
+    if (lastDate.toDateString() !== nowDate.toDateString()) { checkSchedule(); return; }
+    const lastHour = lastDate.getHours();
+    const nowHour = nowDate.getHours();
+    const targetHours = [5, 12, 16, 18];
+    for (const h of targetHours) {
+        if (h > lastHour && h <= nowHour) {
+            const template = h === 5 ? NOTIF_TEMPLATES.morning
+                           : h === 12 ? NOTIF_TEMPLATES.noon
+                           : h === 16 ? NOTIF_TEMPLATES.afternoon
+                           : NOTIF_TEMPLATES.evening;
+            addNotification(template);
+        }
+    }
+    if (nowDate.getDay() === 0) addNotification(NOTIF_TEMPLATES.sunday);
+    localStorage.setItem(NOTIF_LAST_CHECK, now.toString());
+}
+
+function updateNotifBadge() {
+    const list = loadNotifications();
+    const unread = list.filter(n => !n.read).length;
+    if (unread > 0) { notifDot.classList.add('active'); notifBtn.classList.add('has-notif'); notifSubText.textContent = `${unread} notifikasi baru`; }
+    else { notifDot.classList.remove('active'); notifBtn.classList.remove('has-notif'); notifSubText.textContent = list.length > 0 ? `${list.length} notifikasi` : 'Tidak ada notifikasi'; }
+}
+
+function formatNotifTime(ts) {
+    const diff = Date.now() - ts;
+    if (diff < 60000) return 'Baru saja';
+    if (diff < 3600000) return Math.floor(diff / 60000) + ' mnt lalu';
+    if (diff < 86400000) return Math.floor(diff / 3600000) + ' jam lalu';
+    if (diff < 604800000) return Math.floor(diff / 86400000) + ' hari lalu';
+    return new Date(ts).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function renderNotifications() {
+    const list = loadNotifications();
+    if (list.length === 0) {
+        notifList.innerHTML = `<div class="notif-empty"><i class="fas fa-bell-slash"></i><h3>Belum Ada Notifikasi</h3><p>Notifikasi akan muncul otomatis sesuai jadwal harian</p></div>`;
+        updateNotifBadge();
+        return;
+    }
+    list.sort((a, b) => b.createdAt - a.createdAt);
+    const frag = document.createDocumentFragment();
+    list.forEach(n => {
+        const el = document.createElement('div');
+        const typeClass = n.isOwner ? 'owner-notif' : n.type;
+        el.className = 'notif-item' + (n.read ? '' : ' unread') + ' ' + typeClass;
+        const deleteBtnHtml = isOwner ? `<button class="notif-delete-btn" data-delete-id="${n.id}"><i class="fas fa-trash"></i></button>` : '';
+        el.innerHTML = `${deleteBtnHtml}<div class="notif-icon ${n.type}">${n.icon || '🔔'}</div><div class="notif-content"><div class="notif-content-title">${escapeHtml(n.title)}${n.isOwner ? ' 👑' : ''}</div><div class="notif-content-msg">${escapeHtml(n.message)}</div><div class="notif-content-time"><i class="fas fa-clock"></i> ${formatNotifTime(n.createdAt)}</div></div>`;
+        el.addEventListener('click', (e) => {
+            if (e.target.closest('.notif-delete-btn')) return;
+            if (!n.read) {
+                const updated = loadNotifications();
+                const target = updated.find(x => x.id === n.id);
+                if (target) { target.read = true; saveNotifications(updated); updateNotifBadge(); renderNotifications(); }
+            }
+        });
+        frag.appendChild(el);
+    });
+    notifList.innerHTML = '';
+    notifList.appendChild(frag);
+    if (isOwner) {
+        notifList.querySelectorAll('[data-delete-id]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (confirm('Hapus notifikasi ini?')) deleteNotification(btn.dataset.deleteId);
+            });
+        });
+    }
+    updateNotifBadge();
+}
+
+notifBtn.addEventListener('click', () => {
+    stopAllVideos();
+    notifModal.classList.add('active');
+    renderNotifications();
+    setTimeout(() => { const l = loadNotifications(); l.forEach(n => n.read = true); saveNotifications(l); updateNotifBadge(); }, 1000);
+});
+closeNotifModal.addEventListener('click', () => notifModal.classList.remove('active'));
+notifModal.addEventListener('click', (e) => { if (e.target === notifModal) notifModal.classList.remove('active'); });
+
+ownerLoginBtn.addEventListener('click', () => {
+    if (isOwner) ownerMenuModal.classList.add('active');
+    else {
+        ownerCodeInput.value = '';
+        ownerCodeModal.classList.add('active');
+        setTimeout(() => { ownerCodeInput.focus(); ownerCodeInput.click(); }, 400);
+    }
+});
+
+function closeOwnerMenu() { ownerMenuModal.classList.remove('active'); }
+window.closeOwnerMenu = closeOwnerMenu;
+closeOwnerMenuModal.addEventListener('click', closeOwnerMenu);
+ownerMenuModal.addEventListener('click', (e) => { if (e.target === ownerMenuModal) closeOwnerMenu(); });
+
+addNotifBtn.addEventListener('click', () => {
+    if (!isOwner) { ownerCodeInput.value = ''; ownerCodeModal.classList.add('active'); setTimeout(() => { ownerCodeInput.focus(); ownerCodeInput.click(); }, 400); return; }
+    openCreateNotifModal();
+});
+
+function openCreateNotifModal() {
+    notifTitleInput.value = '';
+    notifMessageInput.value = '';
+    selectedEmoji = '🔔';
+    document.querySelectorAll('.emoji-btn').forEach(b => b.classList.toggle('active', b.dataset.emoji === '🔔'));
+    createNotifModal.classList.add('active');
+    setTimeout(() => notifTitleInput.focus(), 300);
+}
+window.openCreateNotifModal = openCreateNotifModal;
+
+function checkOwnerMode() {
+    isOwner = localStorage.getItem(OWNER_MODE_KEY) === 'true';
+    updateOwnerUI();
+}
+
+function setOwnerMode(active) {
+    isOwner = active;
+    if (active) localStorage.setItem(OWNER_MODE_KEY, 'true');
+    else localStorage.removeItem(OWNER_MODE_KEY);
+    updateOwnerUI();
+}
+
+function updateOwnerUI() {
+    if (isOwner) {
+        if (addNotifBtn) addNotifBtn.style.display = 'flex';
+        if (ownerLoginBtn) {
+            const icon = ownerLoginBtn.querySelector('i');
+            if (icon) icon.className = 'fas fa-unlock';
+            ownerLoginBtn.style.background = 'var(--yellow)';
+            ownerLoginBtn.title = 'Menu Owner';
+        }
+        if (notifAvatar) {
+            notifAvatar.classList.add('owner');
+            if (!notifAvatar.querySelector('.owner-badge-notif')) {
+                const badge = document.createElement('div');
+                badge.className = 'owner-badge-notif';
+                badge.textContent = '👑';
+                notifAvatar.appendChild(badge);
+            }
+        }
+        if (logoutOwnerBtn) logoutOwnerBtn.style.display = 'flex';
+        if (chatBtn) chatBtn.classList.add('visible');
+        if (chatOwnerManageBtn) chatOwnerManageBtn.style.display = 'flex';
+    } else {
+        if (addNotifBtn) addNotifBtn.style.display = 'none';
+        if (ownerLoginBtn) {
+            const icon = ownerLoginBtn.querySelector('i');
+            if (icon) icon.className = 'fas fa-lock';
+            ownerLoginBtn.style.background = 'var(--yellow)';
+            ownerLoginBtn.title = 'Login Owner';
+        }
+        if (notifAvatar) notifAvatar.classList.remove('owner');
+        const badge = document.querySelector('.owner-badge-notif');
+        if (badge) badge.remove();
+        if (logoutOwnerBtn) logoutOwnerBtn.style.display = 'none';
+        if (chatBtn) chatBtn.classList.remove('visible');
+        if (chatOwnerManageBtn) chatOwnerManageBtn.style.display = 'none';
+    }
+}
+
+function handleVerifyOwner() {
+    const inputEl = document.getElementById('ownerCodeInput');
+    if (!inputEl) { showToast('Error: input tidak ditemukan', 'error'); return; }
+    const code = String(inputEl.value || '').trim();
+    if (!code) { showToast('Masukkan kode', 'error'); inputEl.focus(); return; }
+    if (code === OWNER_SECRET_CODE) {
+        setOwnerMode(true);
+        ownerCodeModal.classList.remove('active');
+        showToast('👑 Selamat datang, Owner!');
+        setTimeout(() => { ownerMenuModal.classList.add('active'); }, 500);
+    } else {
+        showToast('❌ Kode salah!', 'error');
+        inputEl.value = '';
+        inputEl.focus();
+        inputEl.style.animation = 'none';
+        setTimeout(() => { inputEl.style.animation = 'shake 0.4s'; }, 10);
+    }
+}
+window.handleVerifyOwner = handleVerifyOwner;
+
+setTimeout(() => {
+    const btn = document.getElementById('verifyOwnerBtn');
+    if (btn) btn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); handleVerifyOwner(); };
+    const inputEl = document.getElementById('ownerCodeInput');
+    if (inputEl) inputEl.onkeypress = function(e) { if (e.key === 'Enter') { e.preventDefault(); handleVerifyOwner(); } };
+}, 100);
+
+logoutOwnerBtn.addEventListener('click', () => {
+    if (!confirm('Keluar dari Mode Owner?')) return;
+    setOwnerMode(false);
+    ownerCodeModal.classList.remove('active');
+    ownerMenuModal.classList.remove('active');
+    renderNotifications();
+    showToast('Keluar dari Mode Owner');
+});
+
+function ownerLogoutClick() {
+    if (!confirm('Keluar dari Mode Owner?')) return;
+    setOwnerMode(false);
+    ownerMenuModal.classList.remove('active');
+    renderNotifications();
+    showToast('Keluar dari Mode Owner');
+}
+window.ownerLogoutClick = ownerLogoutClick;
+
+closeOwnerModal.addEventListener('click', () => ownerCodeModal.classList.remove('active'));
+ownerCodeModal.addEventListener('click', (e) => { if (e.target === ownerCodeModal) ownerCodeModal.classList.remove('active'); });
+
+document.querySelectorAll('.emoji-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        selectedEmoji = btn.dataset.emoji;
+        document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    });
+});
+
+submitNotifBtn.addEventListener('click', () => {
+    if (!isOwner) { showToast('❌ Bukan owner', 'error'); return; }
+    const title = notifTitleInput.value.trim();
+    const message = notifMessageInput.value.trim();
+    if (!title) { showToast('Judul harus diisi', 'error'); notifTitleInput.focus(); return; }
+    if (!message) { showToast('Pesan harus diisi', 'error'); notifMessageInput.focus(); return; }
+    addNotification({ icon: selectedEmoji, title, message, type: 'info', isOwner: true });
+    createNotifModal.classList.remove('active');
+    showToast('🔔 Notifikasi terkirim!');
+});
+
+closeCreateNotifModal.addEventListener('click', () => createNotifModal.classList.remove('active'));
+createNotifModal.addEventListener('click', (e) => { if (e.target === createNotifModal) createNotifModal.classList.remove('active'); });
+
+function openOwnerMediaUpload() {
+    if (!isOwner) { showToast('❌ Bukan owner', 'error'); return; }
+    state.forceOwnerMedia = true;
+    addModal.classList.add('active');
+    resetAddForm();
+    ownerBadgeToggle.checked = true;
+    ownerBadgeToggleRow.style.display = 'flex';
+}
+window.openOwnerMediaUpload = openOwnerMediaUpload;
+
+// ===== MAINTENANCE =====
+const maintenanceModal = document.getElementById('maintenanceModal');
+const closeMaintenanceModal = document.getElementById('closeMaintenanceModal');
+const maintHoursInput = document.getElementById('maintHoursInput');
+const maintMinutesInput = document.getElementById('maintMinutesInput');
+const maintSecondsInput = document.getElementById('maintSecondsInput');
+const maintDurationInput = document.getElementById('maintDurationInput');
+const maintReasonInput = document.getElementById('maintReasonInput');
+const startMaintenanceBtn = document.getElementById('startMaintenanceBtn');
+const cancelMaintenanceBtn = document.getElementById('cancelMaintenanceBtn');
+const instantMaintenanceBtn = document.getElementById('instantMaintenanceBtn');
+const maintenanceOverlay = document.getElementById('maintenanceOverlay');
+const maintHours = document.getElementById('maintHours');
+const maintMinutes = document.getElementById('maintMinutes');
+const maintSeconds = document.getElementById('maintSeconds');
+const maintenanceUntilText = document.getElementById('maintenanceUntilText');
+const maintenanceReasonText = document.getElementById('maintenanceReasonText');
+const activeMaintenanceInfo = document.getElementById('activeMaintenanceInfo');
+const activeMaintTime = document.getElementById('activeMaintTime');
+const activeMaintUntil = document.getElementById('activeMaintUntil');
+const previewText = document.getElementById('previewText');
+const maintOwnerUnlock = document.getElementById('maintOwnerUnlock');
+
+function loadMaintenance() { return safeParse(localStorage.getItem(MAINTENANCE_KEY), null); }
+function saveMaintenance(data) {
+    if (data) localStorage.setItem(MAINTENANCE_KEY, JSON.stringify(data));
+    else localStorage.removeItem(MAINTENANCE_KEY);
+}
+
+function openMaintenanceModal() {
+    if (!isOwner) { showToast('❌ Bukan owner', 'error'); return; }
+    maintenanceModal.classList.add('active');
+    const maint = loadMaintenance();
+    if (maint && maint.active) {
+        activeMaintenanceInfo.style.display = 'block';
+        cancelMaintenanceBtn.style.display = 'flex';
+        startMaintenanceBtn.style.display = 'none';
+        updateActiveMaintenanceInfo();
+    } else {
+        activeMaintenanceInfo.style.display = 'none';
+        cancelMaintenanceBtn.style.display = 'none';
+        startMaintenanceBtn.style.display = 'flex';
+    }
+    updateMaintenancePreview();
+}
+window.openMaintenanceModal = openMaintenanceModal;
+
+function updateActiveMaintenanceInfo() {
+    const maint = loadMaintenance();
+    if (!maint || !maint.active) return;
+    if (maint.isOffline) {
+        const remaining = maint.endTime - Date.now();
+        if (remaining <= 0) { saveMaintenance(null); maintenanceOverlay.classList.remove('active'); maintOwnerUnlock.classList.remove('active'); return; }
+        const { h, m, s } = formatHMS(remaining);
+        activeMaintTime.textContent = `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
+        activeMaintUntil.textContent = `Server offline sampai: ${new Date(maint.endTime).toLocaleString('id-ID')}`;
+    } else {
+        const remaining = maint.startTime - Date.now();
+        if (remaining <= 0) { startOfflineMode(); return; }
+        const { h, m, s } = formatHMS(remaining);
+        activeMaintTime.textContent = `⏱️ ${pad2(h)}:${pad2(m)}:${pad2(s)}`;
+        activeMaintUntil.textContent = `Mulai maintenance: ${new Date(maint.startTime).toLocaleString('id-ID')}`;
+    }
+}
+
+function updateMaintenancePreview() {
+    const hours = parseInt(maintHoursInput.value) || 0;
+    const minutes = parseInt(maintMinutesInput.value) || 0;
+    const seconds = parseInt(maintSecondsInput.value) || 0;
+    const duration = parseInt(maintDurationInput.value) || 60;
+    const totalCountdownMs = (hours * 3600 + minutes * 60 + seconds) * 1000;
+    const startTime = Date.now() + totalCountdownMs;
+    const endTime = startTime + (duration * 60 * 1000);
+    if (totalCountdownMs === 0) previewText.textContent = 'Server akan maintenance SEKARANG, lalu offline selama ' + duration + ' menit.';
+    else previewText.textContent = `Countdown ${hours}j ${minutes}m ${seconds}s → Maintenance mulai ${new Date(startTime).toLocaleTimeString('id-ID')} → Offline sampai ${new Date(endTime).toLocaleTimeString('id-ID')}`;
+}
+
+[maintHoursInput, maintMinutesInput, maintSecondsInput, maintDurationInput].forEach(el => el.addEventListener('change', updateMaintenancePreview));
+
+startMaintenanceBtn.addEventListener('click', () => {
+    if (!isOwner) return;
+    const hours = parseInt(maintHoursInput.value) || 0;
+    const minutes = parseInt(maintMinutesInput.value) || 0;
+    const seconds = parseInt(maintSecondsInput.value) || 0;
+    const duration = parseInt(maintDurationInput.value) || 60;
+    const reason = maintReasonInput.value.trim() || 'Server sedang dalam perawatan rutin.';
+    const countdownMs = (hours * 3600 + minutes * 60 + seconds) * 1000;
+    const startTime = Date.now() + countdownMs;
+    const endTime = startTime + (duration * 60 * 1000);
+    if (!confirm(`Mulai hitung mundur?`)) return;
+    saveMaintenance({ active: true, isOffline: false, startTime, endTime, duration, reason, createdAt: Date.now() });
+    addNotification({ icon: '⚠️', title: 'Maintenance Akan Datang', message: `Server akan maintenance dalam ${hours}j ${minutes}m ${seconds}s.`, type: 'maintenance', isOwner: true });
+    maintenanceModal.classList.remove('active');
+    showToast('⏱️ Countdown dimulai!');
+    refreshMaintenanceUI();
+    startMaintenanceTicker();
+});
+
+instantMaintenanceBtn.addEventListener('click', () => {
+    if (!isOwner) return;
+    const duration = parseInt(maintDurationInput.value) || 60;
+    const reason = maintReasonInput.value.trim() || 'Server sedang dalam perawatan rutin.';
+    if (!confirm(`LANGSUNG MAINTENANCE?`)) return;
+    const startTime = Date.now();
+    const endTime = startTime + (duration * 60 * 1000);
+    saveMaintenance({ active: true, isOffline: true, startTime, endTime, duration, reason, createdAt: Date.now() });
+    addNotification({ icon: '🔴', title: 'Server Maintenance', message: `Server offline selama ${duration} menit.`, type: 'maintenance', isOwner: true });
+    maintenanceModal.classList.remove('active');
+    startOfflineMode();
+});
+
+cancelMaintenanceBtn.addEventListener('click', () => {
+    if (!isOwner) return;
+    if (!confirm('Batalkan maintenance?')) return;
+    saveMaintenance(null);
+    maintenanceOverlay.classList.remove('active');
+    maintOwnerUnlock.classList.remove('active');
+    maintenanceModal.classList.remove('active');
+    showToast('Maintenance dibatalkan');
+    refreshMaintenanceUI();
+});
+
+closeMaintenanceModal.addEventListener('click', () => maintenanceModal.classList.remove('active'));
+maintenanceModal.addEventListener('click', (e) => { if (e.target === maintenanceModal) maintenanceModal.classList.remove('active'); });
+
+function startOfflineMode() {
+    const maint = loadMaintenance();
+    if (!maint || !maint.active) return;
+    maint.isOffline = true;
+    if (!maint.endTime || maint.endTime < Date.now()) maint.endTime = Date.now() + (maint.duration || 60) * 60 * 1000;
+    saveMaintenance(maint);
+    maintenanceOverlay.classList.add('active');
+    maintenanceReasonText.textContent = maint.reason || 'Server sedang dalam perawatan.';
+    if (isOwner) maintOwnerUnlock.classList.add('active');
+    updateOfflineCountdown();
+    startMaintenanceTicker();
+}
+
+function updateOfflineCountdown() {
+    const maint = loadMaintenance();
+    if (!maint || !maint.active || !maint.isOffline) {
+        maintenanceOverlay.classList.remove('active');
+        maintOwnerUnlock.classList.remove('active');
+        return;
+    }
+    const remaining = maint.endTime - Date.now();
+    if (remaining <= 0) {
+        saveMaintenance(null);
+        maintenanceOverlay.classList.remove('active');
+        maintOwnerUnlock.classList.remove('active');
+        if (state.maintenanceTickerInterval) clearInterval(state.maintenanceTickerInterval);
+        showToast('✅ Maintenance selesai! Server kembali online.');
+        return;
+    }
+    const { h, m, s } = formatHMS(remaining);
+    maintHours.textContent = pad2(h);
+    maintMinutes.textContent = pad2(m);
+    maintSeconds.textContent = pad2(s);
+    maintenanceUntilText.textContent = `Selesai pada: ${new Date(maint.endTime).toLocaleString('id-ID')}`;
+    if (maintenanceModal.classList.contains('active')) updateActiveMaintenanceInfo();
+}
+
+function startMaintenanceTicker() {
+    if (state.maintenanceTickerInterval) clearInterval(state.maintenanceTickerInterval);
+    state.maintenanceTickerInterval = setInterval(() => {
+        const maint = loadMaintenance();
+        if (!maint || !maint.active) {
+            maintenanceOverlay.classList.remove('active');
+            maintOwnerUnlock.classList.remove('active');
+            return;
+        }
+        if (maint.isOffline) updateOfflineCountdown();
+        else {
+            const remaining = maint.startTime - Date.now();
+            if (remaining <= 0) startOfflineMode();
+            else if (maintenanceModal.classList.contains('active')) updateActiveMaintenanceInfo();
+        }
+    }, 1000);
+}
+
+function refreshMaintenanceUI() {
+    const maint = loadMaintenance();
+    if (!maint || !maint.active) {
+        maintenanceOverlay.classList.remove('active');
+        maintOwnerUnlock.classList.remove('active');
+        return;
+    }
+    if (maint.isOffline) {
+        if (maint.endTime > Date.now()) startOfflineMode();
+        else saveMaintenance(null);
+    } else {
+        if (Date.now() >= maint.startTime) startOfflineMode();
+    }
+    startMaintenanceTicker();
+}
+
+maintOwnerUnlock.addEventListener('click', () => {
+    if (!isOwner) { showToast('❌ Bukan owner', 'error'); return; }
+    const choice = prompt('👑 OWNER ACCESS\n\n1 = Buka Sekarang\n2 = Batal\n\nKetik angka:');
+    if (choice === '1') {
+        if (confirm('Buka server sekarang?')) {
+            saveMaintenance(null);
+            maintenanceOverlay.classList.remove('active');
+            maintOwnerUnlock.classList.remove('active');
+            if (state.maintenanceTickerInterval) clearInterval(state.maintenanceTickerInterval);
+            showToast('✅ Server dibuka!');
+            refreshMaintenanceUI();
+        }
+    }
+});
+
+// ===== CHAT =====
+const chatBtn = document.getElementById('chatBtn');
+const chatDot = document.getElementById('chatDot');
+const chatModal = document.getElementById('chatModal');
+const closeChatModal = document.getElementById('closeChatModal');
+const chatMessages = document.getElementById('chatMessages');
+const chatInput = document.getElementById('chatInput');
+const chatSendBtn = document.getElementById('chatSendBtn');
+const chatStatusText = document.getElementById('chatStatusText');
+const chatStatusIndicator = document.getElementById('chatStatusIndicator');
+const chatStatusLabel = document.getElementById('chatStatusLabel');
+const chatClosedBanner = document.getElementById('chatClosedBanner');
+const chatClosedInfo = document.getElementById('chatClosedInfo');
+const chatInputArea = document.getElementById('chatInputArea');
+const chatOwnerManageBtn = document.getElementById('chatOwnerManageBtn');
+const chatSettingsModal = document.getElementById('chatSettingsModal');
+const closeChatSettingsModal = document.getElementById('closeChatSettingsModal');
+const chatOpenTime = document.getElementById('chatOpenTime');
+const chatCloseTime = document.getElementById('chatCloseTime');
+const chatForceCloseToggle = document.getElementById('chatForceCloseToggle');
+const chatClosedMessage = document.getElementById('chatClosedMessage');
+const saveChatSettingsBtn = document.getElementById('saveChatSettingsBtn');
+const manageChatMessagesBtn = document.getElementById('manageChatMessagesBtn');
+const clearAllChatBtn = document.getElementById('clearAllChatBtn');
+const chatMsgCount = document.getElementById('chatMsgCount');
+const manageChatModal = document.getElementById('manageChatModal');
+const closeManageChatModal = document.getElementById('closeManageChatModal');
+const manageMsgList = document.getElementById('manageMsgList');
+
+function loadChatMessages() { return safeParse(localStorage.getItem(CHAT_STORAGE), []) || []; }
+function saveChatMessages(list) { try { localStorage.setItem(CHAT_STORAGE, JSON.stringify(list.slice(0, 200))); } catch (e) {} }
+function loadChatSettings() { const def = { openTime: '08:00', closeTime: '22:00', forceClose: false, closedMessage: '' }; return { ...def, ...safeParse(localStorage.getItem(CHAT_SETTINGS_KEY), {}) }; }
+function saveChatSettings(s) { try { localStorage.setItem(CHAT_SETTINGS_KEY, JSON.stringify(s)); } catch (e) {} }
+
+function isChatOpen() {
+    const s = loadChatSettings();
+    if (s.forceClose) return false;
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const [openH, openM] = s.openTime.split(':').map(Number);
+    const [closeH, closeM] = s.closeTime.split(':').map(Number);
+    const openMinutes = openH * 60 + openM;
+    const closeMinutes = closeH * 60 + closeM;
+    if (openMinutes < closeMinutes) return currentMinutes >= openMinutes && currentMinutes < closeMinutes;
+    else return currentMinutes >= openMinutes || currentMinutes < closeMinutes;
+}
+
+function updateChatUI() {
+    const isOpen = isChatOpen();
+    const s = loadChatSettings();
+    if (isOpen) {
+        chatStatusText.innerHTML = '<span class="dot"></span> Online';
+        chatStatusText.classList.remove('closed');
+        chatStatusIndicator.className = 'chat-status-indicator open';
+        chatStatusLabel.textContent = `Chat dibuka (${formatTime12(s.openTime)} - ${formatTime12(s.closeTime)})`;
+        chatClosedBanner.classList.remove('active');
+        chatInputArea.style.display = 'block';
+    } else {
+        chatStatusText.innerHTML = '<span class="dot"></span> Offline';
+        chatStatusText.classList.add('closed');
+        chatStatusIndicator.className = 'chat-status-indicator closed';
+        chatStatusLabel.textContent = `Chat ditutup (${formatTime12(s.openTime)} - ${formatTime12(s.closeTime)})`;
+        chatClosedBanner.classList.add('active');
+        chatClosedInfo.textContent = s.closedMessage || `Chat akan dibuka kembali pukul ${formatTime12(s.openTime)}`;
+        chatInputArea.style.display = 'none';
+    }
+}
+
+function renderChatMessages() {
+    const msgs = loadChatMessages();
+    if (msgs.length === 0) {
+        chatMessages.innerHTML = `<div class="chat-empty"><i class="fas fa-comments"></i><h3>Belum Ada Pesan</h3><p>Mulai chat dengan owner sekarang!</p></div>`;
+        return;
+    }
+    msgs.sort((a, b) => a.createdAt - b.createdAt);
+    const frag = document.createDocumentFragment();
+    msgs.forEach(msg => {
+        const isMe = msg.senderId === state.deviceId;
+        const isOwnerMsg = msg.isOwner === true;
+        const el = document.createElement('div');
+        el.className = 'chat-msg ' + (isMe ? 'user' : 'other') + (isOwnerMsg ? ' owner-msg' : '');
+        const deleteBtn = (isOwner && !isMe) ? `<button class="msg-delete-btn" data-msg-id="${msg.id}"><i class="fas fa-times"></i></button>` : '';
+        el.innerHTML = `${deleteBtn}<div class="msg-avatar">${isOwnerMsg ? '<i class="fas fa-crown"></i>' : '<i class="fas fa-user"></i>'}</div><div><div class="chat-bubble"><span class="msg-sender">${isMe ? 'Kamu' : escapeHtml(msg.senderName || 'User')}${isOwnerMsg ? ' 👑' : ''}</span>${escapeHtml(msg.text)}</div><div class="msg-meta"><i class="fas fa-clock"></i> ${formatNotifTime(msg.createdAt)}</div></div>`;
+        frag.appendChild(el);
+    });
+    chatMessages.innerHTML = '';
+    chatMessages.appendChild(frag);
+    setTimeout(() => { chatMessages.scrollTop = chatMessages.scrollHeight; }, 50);
+    if (isOwner) {
+        chatMessages.querySelectorAll('[data-msg-id]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (confirm('Hapus pesan ini?')) {
+                    const filtered = loadChatMessages().filter(m => m.id !== btn.dataset.msgId);
+                    saveChatMessages(filtered);
+                    renderChatMessages();
+                    showToast('Pesan dihapus');
+                }
+            });
+        });
+    }
+}
+
+function sendChatMessage() {
+    const text = chatInput.value.trim();
+    if (!text) return;
+    if (!isChatOpen() && !isOwner) { showToast('Chat sedang ditutup', 'warning'); return; }
+    const msgs = loadChatMessages();
+    msgs.push({
+        id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+        senderId: state.deviceId, senderName: isOwner ? 'Owner' : getUserName(),
+        text: text, isOwner: isOwner, createdAt: Date.now()
+    });
+    saveChatMessages(msgs);
+    chatInput.value = '';
+    chatInput.style.height = 'auto';
+    renderChatMessages();
+    updateChatBadge();
+}
+
+function updateChatBadge() {
+    const msgs = loadChatMessages();
+    const lastSeen = parseInt(localStorage.getItem('mv_chat_last_seen') || '0');
+    const unread = msgs.filter(m => m.createdAt > lastSeen && m.senderId !== state.deviceId).length;
+    if (unread > 0) chatDot.classList.add('active');
+    else chatDot.classList.remove('active');
+}
+
+chatBtn.addEventListener('click', () => {
+    stopAllVideos();
+    chatModal.classList.add('active');
+    updateChatUI();
+    renderChatMessages();
+    localStorage.setItem('mv_chat_last_seen', Date.now().toString());
+    updateChatBadge();
+    setTimeout(() => { chatMessages.scrollTop = chatMessages.scrollHeight; }, 100);
+});
+
+closeChatModal.addEventListener('click', () => { chatModal.classList.remove('active'); });
+chatModal.addEventListener('click', (e) => { if (e.target === chatModal) chatModal.classList.remove('active'); });
+chatSendBtn.addEventListener('click', sendChatMessage);
+chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); } });
+chatInput.addEventListener('input', () => { chatInput.style.height = 'auto'; chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px'; });
+
+chatOwnerManageBtn.addEventListener('click', () => openChatSettings());
+
+function openChatSettings() {
+    if (!isOwner) { showToast('❌ Bukan owner', 'error'); return; }
+    const s = loadChatSettings();
+    chatOpenTime.value = s.openTime;
+    chatCloseTime.value = s.closeTime;
+    chatForceCloseToggle.checked = s.forceClose;
+    chatClosedMessage.value = s.closedMessage || '';
+    chatMsgCount.textContent = loadChatMessages().length;
+    chatSettingsModal.classList.add('active');
+}
+window.openChatSettings = openChatSettings;
+
+closeChatSettingsModal.addEventListener('click', () => chatSettingsModal.classList.remove('active'));
+chatSettingsModal.addEventListener('click', (e) => { if (e.target === chatSettingsModal) chatSettingsModal.classList.remove('active'); });
+
+saveChatSettingsBtn.addEventListener('click', () => {
+    if (!isOwner) return;
+    saveChatSettings({
+        openTime: chatOpenTime.value || '08:00',
+        closeTime: chatCloseTime.value || '22:00',
+        forceClose: chatForceCloseToggle.checked,
+        closedMessage: chatClosedMessage.value.trim()
+    });
+    showToast('✅ Pengaturan chat disimpan');
+    updateChatUI();
+});
+
+manageChatMessagesBtn.addEventListener('click', () => openManageChat());
+
+function openManageChat() {
+    if (!isOwner) return;
+    const msgs = loadChatMessages();
+    if (msgs.length === 0) {
+        manageMsgList.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-muted);font-size:13px;font-weight:700">Belum ada pesan</div>`;
+    } else {
+        msgs.sort((a, b) => b.createdAt - a.createdAt);
+        manageMsgList.innerHTML = msgs.map(m => `<div class="msg-list-item"><div class="msg-list-name">${escapeHtml(m.senderName || 'User')}${m.isOwner ? ' 👑' : ''}</div><div class="msg-list-text">${escapeHtml(m.text)}</div><div class="msg-list-time"><i class="fas fa-clock"></i> ${formatNotifTime(m.createdAt)}</div><button class="msg-list-delete" data-msg-id="${m.id}"><i class="fas fa-trash"></i></button></div>`).join('');
+        manageMsgList.querySelectorAll('[data-msg-id]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (confirm('Hapus pesan ini?')) {
+                    const filtered = loadChatMessages().filter(x => x.id !== btn.dataset.msgId);
+                    saveChatMessages(filtered);
+                    openManageChat();
+                    renderChatMessages();
+                    chatMsgCount.textContent = filtered.length;
+                    showToast('Pesan dihapus');
+                }
+            });
+        });
+    }
+    manageChatModal.classList.add('active');
+}
+
+closeManageChatModal.addEventListener('click', () => manageChatModal.classList.remove('active'));
+manageChatModal.addEventListener('click', (e) => { if (e.target === manageChatModal) manageChatModal.classList.remove('active'); });
+
+clearAllChatBtn.addEventListener('click', () => {
+    if (!isOwner) return;
+    if (!confirm('Hapus SEMUA pesan chat?')) return;
+    saveChatMessages([]);
+    chatMsgCount.textContent = '0';
+    renderChatMessages();
+    showToast('Semua chat dihapus');
+});
+
+// ===== DOWNLOADER =====
+const dlBtn = document.getElementById('dlBtn');
+const dlModal = document.getElementById('dlModal');
+const closeDlModal = document.getElementById('closeDlModal');
+
+document.querySelectorAll('.dl-platform-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        const platform = tab.dataset.platform;
+        // Block Instagram & CapCut
+        if (platform === 'instagram' || platform === 'capcut') {
+            showToast('⏳ Fitur Coming Soon!', 'warning');
+            return;
+        }
+        state.currentPlatform = platform;
+        document.querySelectorAll('.dl-platform-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        document.querySelectorAll('.dl-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('panel-' + platform).classList.add('active');
+    });
+});
+
+dlBtn.addEventListener('click', () => { stopAllVideos(); dlModal.classList.add('active'); });
+closeDlModal.addEventListener('click', () => dlModal.classList.remove('active'));
+dlModal.addEventListener('click', (e) => { if (e.target === dlModal) dlModal.classList.remove('active'); });
+
+// TikTok
+const tiktokUrlInput = document.getElementById('tiktokUrlInput');
+const tiktokProcessBtn = document.getElementById('tiktokProcessBtn');
+const tiktokLoading = document.getElementById('tiktokLoading');
+const tiktokLoadingText = document.getElementById('tiktokLoadingText');
+const tiktokError = document.getElementById('tiktokError');
+const tiktokErrorText = document.getElementById('tiktokErrorText');
+const tiktokResult = document.getElementById('tiktokResult');
+const tiktokVideoPreview = document.getElementById('tiktokVideoPreview');
+const tiktokTitle = document.getElementById('tiktokTitle');
+const tiktokAuthor = document.getElementById('tiktokAuthor');
+const tiktokDlHd = document.getElementById('tiktokDlHd');
+const tiktokDlSd = document.getElementById('tiktokDlSd');
+const tiktokDlAudio = document.getElementById('tiktokDlAudio');
+const tiktokDlCover = document.getElementById('tiktokDlCover');
+
+const TIKTOK_APIS = [
+    { name: 'TikWM', build: (url) => `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}&hd=1`,
+      parse: (d) => { if (!d || d.code !== 0 || !d.data) return null; const x = d.data; return { videoHd: x.hdplay || x.play, videoSd: x.play, audio: x.music, cover: x.cover, title: x.title || 'Video TikTok', author: x.author ? (x.author.nickname || x.author.unique_id) : 'Tidak diketahui' }; } },
+    { name: 'TikWM-v2', build: (url) => `https://api.tikwm.com/video/?url=${encodeURIComponent(url)}`,
+      parse: (d) => { if (!d || d.code !== 0 || !d.data) return null; const x = d.data; return { videoHd: x.hdplay || x.play, videoSd: x.play, audio: x.music, cover: x.cover, title: x.title || 'Video TikTok', author: x.author ? (x.author.nickname || x.author.unique_id) : 'Tidak diketahui' }; } }
+];
+
+async function tryTiktokApis(url) {
+    const errors = [];
+    for (const api of TIKTOK_APIS) {
+        try {
+            tiktokLoadingText.textContent = `Mencoba ${api.name}...`;
+            const controller = new AbortController();
+            const t = setTimeout(() => controller.abort(), 15000);
+            const res = await fetch(api.build(url), { signal: controller.signal });
+            clearTimeout(t);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            const parsed = api.parse(data);
+            if (parsed && (parsed.videoHd || parsed.videoSd)) return parsed;
+            errors.push(`${api.name}: data tidak lengkap`);
+        } catch (e) { errors.push(`${api.name}: ${e.message}`); }
+    }
+    throw new Error('Semua API gagal. ' + errors.join(' | '));
+}
+
+async function processTiktok() {
+    const rawUrl = tiktokUrlInput.value.trim();
+    if (!rawUrl) { showToast('Masukkan link TikTok', 'error'); return; }
+    if (!/tiktok\.com/i.test(rawUrl)) { showToast('URL tidak valid', 'error'); return; }
+    tiktokError.classList.remove('active');
+    tiktokResult.classList.remove('active');
+    tiktokLoading.classList.add('active');
+    tiktokProcessBtn.disabled = true;
+    tiktokLoadingText.textContent = 'Mengambil data...';
+    try {
+        const data = await tryTiktokApis(rawUrl);
+        state.tiktokData = data;
+        tiktokVideoPreview.src = data.videoSd || data.videoHd;
+        tiktokTitle.textContent = data.title || 'Video TikTok';
+        tiktokAuthor.innerHTML = `<i class="fas fa-user"></i> ${escapeHtml(data.author)}`;
+        tiktokLoading.classList.remove('active');
+        tiktokResult.classList.add('active');
+        showToast('✅ Video berhasil dimuat!');
+    } catch (e) {
+        tiktokLoading.classList.remove('active');
+        tiktokError.classList.add('active');
+        tiktokErrorText.textContent = e.message;
+        showToast('Gagal memuat video', 'error');
+    } finally { tiktokProcessBtn.disabled = false; }
+}
+
+tiktokProcessBtn.addEventListener('click', processTiktok);
+tiktokUrlInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') processTiktok(); });
+tiktokDlHd.addEventListener('click', () => { if (state.tiktokData) downloadFile(state.tiktokData.videoHd, `tiktok_hd_${Date.now()}.mp4`); });
+tiktokDlSd.addEventListener('click', () => { if (state.tiktokData) downloadFile(state.tiktokData.videoSd, `tiktok_sd_${Date.now()}.mp4`); });
+tiktokDlAudio.addEventListener('click', () => { if (state.tiktokData && state.tiktokData.audio) downloadFile(state.tiktokData.audio, `tiktok_audio_${Date.now()}.mp3`); else showToast('Audio tidak tersedia', 'error'); });
+tiktokDlCover.addEventListener('click', () => { if (state.tiktokData && state.tiktokData.cover) downloadFile(state.tiktokData.cover, `tiktok_cover_${Date.now()}.jpg`); else showToast('Cover tidak tersedia', 'error'); });
+
+function downloadFile(url, filename) {
+    if (!url) { showToast('URL tidak tersedia', 'error'); return; }
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.target = '_blank'; a.rel = 'noopener';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    showToast('Download dimulai...');
+}
+
+function setDlExample(platform, type) {
+    const examples = {
+        tiktok: { vt: 'https://vt.tiktok.com/ZSqQMWges/', vm: 'https://vm.tiktok.com/ZSqQDDVmU/', www: 'https://www.tiktok.com/@tiktok/video/7429593052677262625' }
+    };
+    const url = examples[platform] && examples[platform][type] ? examples[platform][type] : '';
+    if (platform === 'tiktok') tiktokUrlInput.value = url;
+}
+window.setDlExample = setDlExample;
+
+// ===== UPGRADE =====
+const upgradeModal = document.getElementById('upgradeModal');
+const closeUpgradeModal = document.getElementById('closeUpgradeModal');
+const upgradeCodeInput = document.getElementById('upgradeCodeInput');
+const applyUpgradeBtn = document.getElementById('applyUpgradeBtn');
+const cancelUpgradeBtn = document.getElementById('cancelUpgradeBtn');
+
+function openUpgradeModal() {
+    if (!isOwner) { showToast('❌ Bukan owner', 'error'); return; }
+    upgradeCodeInput.value = '';
+    upgradeModal.classList.add('active');
+}
+window.openUpgradeModal = openUpgradeModal;
+
+closeUpgradeModal.addEventListener('click', () => upgradeModal.classList.remove('active'));
+upgradeModal.addEventListener('click', (e) => { if (e.target === upgradeModal) upgradeModal.classList.remove('active'); });
+cancelUpgradeBtn.addEventListener('click', () => {
+    if (upgradeCodeInput.value.trim() && !confirm('Buang perubahan?')) return;
+    upgradeModal.classList.remove('active');
+});
+
+applyUpgradeBtn.addEventListener('click', () => {
+    if (!isOwner) { showToast('❌ Bukan owner', 'error'); return; }
+    const code = upgradeCodeInput.value.trim();
+    if (!code) { showToast('Paste kode HTML dulu', 'error'); return; }
+    if (!code.toLowerCase().includes('<!doctype html') && !code.toLowerCase().includes('<html')) { showToast('Kode HTML tidak valid', 'error'); return; }
+    if (!confirm('⚠️ Ubah aplikasi ke versi baru?')) return;
+    try {
+        localStorage.setItem(CUSTOM_HTML_KEY, code);
+        showToast('✅ Upgrade berhasil! Reload...');
+        document.open(); document.write(code); document.close();
+    } catch (e) { showToast('Gagal upgrade: ' + e.message, 'error'); }
+});
+
+(function checkCustomHtml() {
+    const custom = localStorage.getItem(CUSTOM_HTML_KEY);
+    if (custom && custom.length > 100) {
+        if (confirm('🔄 Ada versi kustom tersimpan. Muat sekarang?')) {
+            document.open(); document.write(custom); document.close();
+        }
+    }
+})();
+
+// ===== DEBUG =====
+window.testNotif = function(type) {
+    if (NOTIF_TEMPLATES[type]) {
+        const list = loadNotifications();
+        const today = new Date().toDateString();
+        const key = `${type}_${today}`;
+        saveNotifications(list.filter(n => n.dedupeKey !== key));
+        addNotification(NOTIF_TEMPLATES[type]);
+        showToast(`Test notif: ${type}`);
+    }
+};
+window.ownerLogin = function() { setOwnerMode(true); showToast('👑 Owner login'); };
+window.ownerLogout = function() { setOwnerMode(false); showToast('Owner logout'); };
+window.clearMaint = function() { saveMaintenance(null); maintenanceOverlay.classList.remove('active'); maintOwnerUnlock.classList.remove('active'); refreshMaintenanceUI(); showToast('Maintenance dihapus'); };
+window.resetCustomHtml = function() { localStorage.removeItem(CUSTOM_HTML_KEY); showToast('Direset'); setTimeout(() => location.reload(), 1000); };
+
+function requestNotifPermission() {
+    if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+}
+
+let scheduleTimer = null;
+function startScheduleTimer() {
+    if (scheduleTimer) clearInterval(scheduleTimer);
+    scheduleTimer = setInterval(() => checkSchedule(), 30000);
+}
+
+function startChatRefresh() {
+    if (state.chatRefreshTimer) clearInterval(state.chatRefreshTimer);
+    state.chatRefreshTimer = setInterval(() => {
+        if (chatModal.classList.contains('active')) {
+            renderChatMessages();
+            updateChatUI();
+            updateChatBadge();
+        }
+    }, 3000);
+}
+
+async function init() {
+    try {
+        initDeviceId();
+        getUserName();
+        await openDB();
+        initDemoCommunity();
+        state.allMedia = await dbGetAll();
+
+        checkOwnerMode();
+        checkMissedNotifications();
+        updateNotifBadge();
+        startScheduleTimer();
+        requestNotifPermission();
+
+        const maint = loadMaintenance();
+        if (maint && maint.active) refreshMaintenanceUI();
+
+        updateChatBadge();
+        startChatRefresh();
+        updateChatUI();
+        updateFabVisibility();
+
+        console.log('✅ MediaVault v8.1 ready');
+        console.log('👑 Owner:', isOwner ? 'AKTIF' : 'Nonaktif');
+        console.log('📥 TikTok Downloader: AKTIF');
+        console.log('⏳ Instagram & CapCut: COMING SOON');
+        console.log('🗑️ Owner bisa hapus media komunitas');
+
+        renderGallery();
+    } catch (e) {
+        console.error('Init error:', e);
+        showToast('Gagal init: ' + e.message, 'error');
+    }
+}
+
+init();
+</script>
+</body>
+  </html>
